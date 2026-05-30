@@ -36,12 +36,29 @@ export default function Navigation() {
 
           <button
             type="button"
-            className="inline-flex h-10 w-10 items-center justify-center rounded-md border border-blue-800 text-blue-100 lg:hidden"
+            className="group inline-flex h-10 w-10 items-center justify-center rounded-md border border-blue-800 text-blue-100 transition hover:border-yellow-200 hover:text-yellow-200 lg:hidden"
             aria-label="Toggle navigation"
             aria-expanded={isOpen}
             onClick={() => setIsOpen((value) => !value)}
           >
-            <span className="text-sm font-semibold">{isOpen ? 'Close' : 'Menu'}</span>
+            <span className="sr-only">{isOpen ? 'Close navigation' : 'Open navigation'}</span>
+            <span className="relative h-5 w-5" aria-hidden="true">
+              <span
+                className={`absolute left-0 top-1 block h-0.5 w-5 rounded-full bg-current transition ${
+                  isOpen ? 'translate-y-2 rotate-45' : ''
+                }`}
+              ></span>
+              <span
+                className={`absolute left-0 top-2.5 block h-0.5 w-5 rounded-full bg-current transition ${
+                  isOpen ? 'opacity-0' : ''
+                }`}
+              ></span>
+              <span
+                className={`absolute left-0 top-4 block h-0.5 w-5 rounded-full bg-current transition ${
+                  isOpen ? '-translate-y-1.5 -rotate-45' : ''
+                }`}
+              ></span>
+            </span>
           </button>
         </div>
 
