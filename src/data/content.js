@@ -164,6 +164,7 @@ export const siteContent = {
         {
           id: 'insights-hero',
           type: 'page-hero',
+          wide: true,
           eyebrow: 'Insights',
           title: 'Public notes on AI, operating models, product architecture, delivery governance, India execution, venture building, and leadership.',
           body: 'Some pieces may be published on LinkedIn, some on Medium, and some natively on this site. This page brings them together in one place.',
