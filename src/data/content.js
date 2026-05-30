@@ -32,7 +32,7 @@ export const siteContent = {
           primaryCta: { label: 'Start a Working Conversation', href: '/contact' },
           secondaryCta: { label: 'View Investments', href: '/investments' },
           tertiaryCta: { label: 'Read Insights', href: '/insights' },
-          media: { url: '/sasidhar-valluru.jpg', alt: 'Sasidhar Valluru professional portrait' },
+          media: { url: '/sasidhar-valluru.png', alt: 'Sasidhar Valluru professional portrait' },
         },
         {
           id: 'home-thesis',
