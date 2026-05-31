@@ -3,6 +3,10 @@ import process from 'node:process';
 
 const contentKey = 'thevalluru:site-state';
 
+function hasUpstashConfig() {
+  return Boolean(process.env.UPSTASH_REDIS_REST_URL && process.env.UPSTASH_REDIS_REST_TOKEN);
+}
+
 function sendJson(response, statusCode, payload) {
   response.statusCode = statusCode;
   response.setHeader('Content-Type', 'application/json');
@@ -29,7 +33,7 @@ async function upstash(command) {
   const token = process.env.UPSTASH_REDIS_REST_TOKEN;
 
   if (!url || !token) {
-    throw new Error('Upstash environment variables are not configured.');
+    throw new Error('Upstash environment variables are not configured in Vercel.');
   }
 
   const response = await fetch(url, {
@@ -56,6 +60,13 @@ async function upstash(command) {
 export default async function handler(request, response) {
   try {
     if (request.method === 'GET') {
+      if (!hasUpstashConfig()) {
+        return sendJson(response, 200, {
+          configured: false,
+          error: 'Upstash environment variables are not configured in Vercel.',
+        });
+      }
+
       const result = await upstash(['GET', contentKey]);
       return sendJson(response, 200, result ? JSON.parse(result) : {});
     }
@@ -65,7 +76,13 @@ export default async function handler(request, response) {
       const providedPassword = request.headers['x-admin-password'];
 
       if (providedPassword !== expectedPassword) {
-        return sendJson(response, 401, { error: 'Unauthorized' });
+        return sendJson(response, 401, { error: 'Unauthorized. Enter the current admin password again.' });
+      }
+
+      if (!hasUpstashConfig()) {
+        return sendJson(response, 500, {
+          error: 'Upstash environment variables are not configured in Vercel.',
+        });
       }
 
       const payload = await readBody(request);

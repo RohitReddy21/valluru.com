@@ -12,7 +12,7 @@ import {
   unlockAdmin,
 } from '../data/cms';
 import { defaultSiteContent, siteContent } from '../data/content';
-import { saveLiveCms } from '../data/liveCms';
+import { checkLiveCms, saveLiveCms } from '../data/liveCms';
 
 const colorFields = [
   ['deepNavy', 'Deep Navy'],
@@ -365,6 +365,7 @@ export default function Admin() {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [status, setStatus] = useState('');
+  const [liveStatus, setLiveStatus] = useState('');
   const [theme, setTheme] = useState(() => getTheme());
   const [content, setContent] = useState(() => siteContent);
   const [activePanel, setActivePanel] = useState(() => (searchParams.get('page') ? 'pages' : 'brand'));
@@ -376,13 +377,19 @@ export default function Admin() {
 
   const saveCurrentChanges = useCallback(async () => {
     const parsedContent = advancedOpen ? JSON.parse(contentJson) : content;
-    saveSiteContent(parsedContent);
-    saveTheme(theme);
+    const adminPassword = getAdminPassword();
+
+    if (!adminPassword) {
+      throw new Error('Admin session expired. Lock admin, unlock again, then save.');
+    }
+
     await saveLiveCms({
       content: parsedContent,
       theme,
-      adminPassword: getAdminPassword(),
+      adminPassword,
     });
+    saveSiteContent(parsedContent);
+    saveTheme(theme);
     setStatus('Saved locally and to live storage.');
     setError('');
   }, [advancedOpen, content, contentJson, theme]);
@@ -405,7 +412,7 @@ export default function Admin() {
       await saveCurrentChanges();
       window.location.reload();
     } catch (error) {
-      setError(error.message || 'Content JSON is not valid. Fix the JSON before saving.');
+      setError(`${error.message || 'Live save failed.'} The change was not saved for other browsers. Check Vercel environment variables and use "Save local only" only for testing.`);
     }
   }
 
@@ -422,6 +429,28 @@ export default function Admin() {
     }
   }
 
+  async function handleCheckLiveStorage() {
+    setLiveStatus('Checking live storage...');
+    const result = await checkLiveCms();
+
+    if (!result.ok) {
+      setLiveStatus(`Live storage is not reachable: ${result.error}`);
+      return;
+    }
+
+    if (result.data?.configured === false) {
+      setLiveStatus(`Live storage is not configured: ${result.data.error}`);
+      return;
+    }
+
+    if (result.data?.updatedAt) {
+      setLiveStatus(`Live storage is working. Last live update: ${new Date(result.data.updatedAt).toLocaleString()}`);
+      return;
+    }
+
+    setLiveStatus('Live storage is reachable, but no saved live content exists yet.');
+  }
+
   useEffect(() => {
     if (!unlocked) return undefined;
 
@@ -429,7 +458,7 @@ export default function Admin() {
       if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 's') {
         event.preventDefault();
         saveCurrentChanges().catch((error) => {
-          setError(error.message || 'Content JSON is not valid. Fix the JSON before saving.');
+          setError(`${error.message || 'Live save failed.'} The change was not saved for other browsers. Check live storage.`);
         });
       }
     }
@@ -530,7 +559,7 @@ export default function Admin() {
             {error && <p className="mt-4 text-sm font-semibold text-red-700">{error}</p>}
             <button type="submit" className="btn-primary mt-6 w-full">Unlock</button>
             <p className="mt-4 text-sm text-[var(--muted-blue)]">
-              Browser-only admin gate. Use a backend later if this must securely update the public live site for everyone.
+              Use the ADMIN_PASSWORD configured in Vercel. Unlocking again refreshes the password used for live saves.
             </p>
           </form>
         </div>
@@ -564,9 +593,27 @@ export default function Admin() {
         <div className="mb-8 rounded-xl border border-[var(--surface-grey)] bg-white p-6 shadow-lg shadow-slate-900/10">
           <h2 className="text-2xl font-bold text-[var(--deep-navy)]">How this editor works</h2>
           <p className="mt-3 text-[var(--muted-blue)]">
-            This is a no-service admin editor. It stores your changes in browser storage and includes export/import backup.
-            A static website cannot securely update every visitor's live content without some backend or hosted storage.
+            This editor saves to live storage first, then mirrors the same changes in this browser for faster loading.
+            If live storage is not configured, other browsers will not see the update.
           </p>
+          <div className="mt-4 rounded-lg border border-[var(--surface-grey)] bg-[var(--warm-white)] p-4">
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+              <div>
+                <p className="text-sm font-bold text-[var(--deep-navy)]">Live sync status</p>
+                <p className="mt-1 text-sm text-[var(--muted-blue)]">
+                  Use this to confirm changes will appear in another browser/profile.
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={handleCheckLiveStorage}
+                className="btn-secondary !border-[var(--mid-navy)] !text-[var(--deep-navy)] hover:!bg-white"
+              >
+                Check live storage
+              </button>
+            </div>
+            {liveStatus && <p className="mt-3 text-sm font-semibold text-[var(--deep-navy)]">{liveStatus}</p>}
+          </div>
           <p className="mt-3 text-sm font-semibold text-[var(--deep-navy)]">
             Use iconUrl or logoUrl for small logo/icon images. Use mediaUrl for full card images or videos.
             Public assets should be placed in the public folder and referenced like /logo.png or /video.mp4.

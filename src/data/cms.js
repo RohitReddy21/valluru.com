@@ -26,6 +26,10 @@ function canUseStorage() {
   return typeof window !== 'undefined' && window.localStorage;
 }
 
+function canUseSessionStorage() {
+  return typeof window !== 'undefined' && window.sessionStorage;
+}
+
 function readJson(key, fallback) {
   if (!canUseStorage()) return fallback;
 
@@ -75,11 +79,16 @@ export function resetCms() {
 }
 
 export function isAdminUnlocked() {
-  return canUseStorage() && window.localStorage.getItem(adminKey) === 'true';
+  return (
+    canUseStorage() &&
+    canUseSessionStorage() &&
+    window.localStorage.getItem(adminKey) === 'true' &&
+    Boolean(window.sessionStorage.getItem(adminPasswordKey))
+  );
 }
 
 export function unlockAdmin(password) {
-  if (password.trim()) {
+  if (canUseStorage() && canUseSessionStorage() && password.trim()) {
     window.localStorage.setItem(adminKey, 'true');
     window.sessionStorage.setItem(adminPasswordKey, password);
     return true;
@@ -89,11 +98,12 @@ export function unlockAdmin(password) {
 }
 
 export function lockAdmin() {
+  if (!canUseStorage() || !canUseSessionStorage()) return;
   window.localStorage.removeItem(adminKey);
   window.sessionStorage.removeItem(adminPasswordKey);
 }
 
 export function getAdminPassword() {
-  if (!canUseStorage()) return '';
+  if (!canUseSessionStorage()) return '';
   return window.sessionStorage.getItem(adminPasswordKey) || '';
 }
