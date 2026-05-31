@@ -89,9 +89,9 @@ export const defaultSiteContent = {
           title: 'Capital paired with architecture, product thinking, and operating discipline.',
           body: 'I back and build ventures where the market problem is real, the operating model can scale, and technology can become a force multiplier. My focus is not passive ownership.',
           cards: [
-            { title: 'TechJignayasa', body: 'AI adoption - Platform engineering - India execution. Platform and execution partnership for moving AI intent into working systems.', iconUrl: '', logoUrl: '', mediaUrl: '' },
-            { title: 'PrimeVerse', body: 'Active venture and investment platform. Final public positioning should be confirmed based on current scope and market.', iconUrl: '', logoUrl: '', mediaUrl: '' },
-            { title: 'VipasEnergy', body: 'Energy and utility management platform for enterprise utility workflows, analytics, rate and tariff optimization, reporting, and expense management.', iconUrl: '', logoUrl: '', mediaUrl: '' },
+            { title: 'TechJignayasa', body: 'AI adoption - Platform engineering - India execution. Platform and execution partnership for moving AI intent into working systems.', iconUrl: '', logoUrl: 'https://techjignyasa.com/assets/logo_white@2x-2-DnnDihkT.png', mediaUrl: '' },
+            { title: 'PrimeVerse', body: 'Active venture and investment platform. Final public positioning should be confirmed based on current scope and market.', iconUrl: '', logoUrl: 'https://primeverse.in/assets/logo-ihOaMegF.jpeg', mediaUrl: '' },
+            { title: 'VipasEnergy', body: 'Energy and utility management platform for enterprise utility workflows, analytics, rate and tariff optimization, reporting, and expense management.', iconUrl: '', logoUrl: 'https://vipas-demo-iota.vercel.app/assets/logo-D8r5BTr7.png', mediaUrl: '' },
             { title: 'Future Themes', body: 'Applied AI, vertical AI, security AI, energy operations, India ODC/BOT, human-in-the-loop operations, MSME AI adoption, and enterprise workflow automation.', iconUrl: '', logoUrl: '', mediaUrl: '' },
           ],
           primaryCta: { label: 'View Investment Interests', href: '/investments' },
