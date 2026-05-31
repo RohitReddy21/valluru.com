@@ -1,4 +1,4 @@
-import { saveSiteContentToKV, loadSiteContentFromKV, saveThemeToKV, loadThemeFromKV } from '../services/kvService';
+import { saveSiteContentToUpstash, loadSiteContentFromUpstash, saveThemeToUpstash, loadThemeFromUpstash } from '../services/upstashService';
 
 export const defaultTheme = {
   deepNavy: '#0B1120',
@@ -63,15 +63,15 @@ export function getTheme() {
 export function saveSiteContent(content) {
   if (!canUseStorage()) return;
   window.localStorage.setItem(contentKey, JSON.stringify(content));
-  // Save to Vercel KV in the background
-  saveSiteContentToKV(content).catch(err => console.error('KV save failed:', err));
+  // Save to Upstash in the background
+  saveSiteContentToUpstash(content).catch(err => console.error('Upstash save failed:', err));
 }
 
 export function saveTheme(theme) {
   if (!canUseStorage()) return;
   window.localStorage.setItem(themeKey, JSON.stringify(theme));
-  // Save to Vercel KV in the background
-  saveThemeToKV(theme).catch(err => console.error('KV save failed:', err));
+  // Save to Upstash in the background
+  saveThemeToUpstash(theme).catch(err => console.error('Upstash save failed:', err));
 }
 
 export function resetCms() {
@@ -97,30 +97,30 @@ export function lockAdmin() {
 }
 
 // Firebase sync functions
-export async function syncContentFromKV(defaultContent) {
+export async function syncContentFromUpstash(defaultContent) {
   try {
-    const kvContent = await loadSiteContentFromKV();
-    if (kvContent) {
-      if (!canUseStorage()) return kvContent;
-      window.localStorage.setItem(contentKey, JSON.stringify(kvContent));
-      return kvContent;
+    const upstashContent = await loadSiteContentFromUpstash();
+    if (upstashContent) {
+      if (!canUseStorage()) return upstashContent;
+      window.localStorage.setItem(contentKey, JSON.stringify(upstashContent));
+      return upstashContent;
     }
   } catch (error) {
-    console.error('Error syncing content from KV:', error);
+    console.error('Error syncing content from Upstash:', error);
   }
   return null;
 }
 
-export async function syncThemeFromKV() {
+export async function syncThemeFromUpstash() {
   try {
-    const kvTheme = await loadThemeFromKV();
-    if (kvTheme) {
-      if (!canUseStorage()) return kvTheme;
-      window.localStorage.setItem(themeKey, JSON.stringify(kvTheme));
-      return kvTheme;
+    const upstashTheme = await loadThemeFromUpstash();
+    if (upstashTheme) {
+      if (!canUseStorage()) return upstashTheme;
+      window.localStorage.setItem(themeKey, JSON.stringify(upstashTheme));
+      return upstashTheme;
     }
   } catch (error) {
-    console.error('Error syncing theme from KV:', error);
+    console.error('Error syncing theme from Upstash:', error);
   }
   return null;
 }
