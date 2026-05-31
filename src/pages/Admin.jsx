@@ -312,6 +312,51 @@ function DesignSettings({ design, onChange }) {
   );
 }
 
+function HeroBackgrounds({ pages, onUpdateSection }) {
+  const heroSections = Object.entries(pages).flatMap(([pageKey, page]) => (
+    (page.sections || [])
+      .filter((section) => section.type === 'hero' || section.type === 'page-hero')
+      .map((section) => ({ pageKey, pageTitle: page.title || prettyLabel(pageKey), section }))
+  ));
+
+  return (
+    <div className="rounded-xl border border-[var(--surface-grey)] bg-white p-6 shadow-lg shadow-slate-900/10">
+      <h2 className="text-2xl font-bold text-[var(--deep-navy)]">Hero Backgrounds</h2>
+      <p className="mt-2 text-sm text-[var(--muted-blue)]">
+        Set the hero background image or video for every page from one place. Put files in public and reference them like /hero-tech-bg.png or /hero-background.mp4.
+      </p>
+      <div className="mt-5 grid gap-4">
+        {heroSections.map(({ pageKey, pageTitle, section }) => (
+          <div key={`${pageKey}-${section.id}`} className="grid gap-4 rounded-xl border border-[var(--surface-grey)] bg-[var(--warm-white)] p-4 lg:grid-cols-[12rem_1fr_1fr]">
+            <div>
+              <p className="text-sm font-bold text-[var(--deep-navy)]">{pageTitle}</p>
+              <p className="mt-1 text-xs font-semibold uppercase tracking-[0.14em] text-[var(--muted-blue)]">{section.eyebrow || section.id}</p>
+            </div>
+            <label className="grid gap-2">
+              <span className="text-sm font-bold text-[var(--deep-navy)]">Background video path</span>
+              <input
+                value={section.backgroundVideo || ''}
+                onChange={(event) => onUpdateSection(pageKey, section.id, { backgroundVideo: event.target.value })}
+                placeholder="/hero-background.mp4"
+                className="rounded-lg border border-[var(--surface-grey)] bg-white px-4 py-3 text-sm text-[var(--deep-navy)] outline-none focus:border-[var(--gold)]"
+              />
+            </label>
+            <label className="grid gap-2">
+              <span className="text-sm font-bold text-[var(--deep-navy)]">Fallback image path</span>
+              <input
+                value={section.backgroundImage || ''}
+                onChange={(event) => onUpdateSection(pageKey, section.id, { backgroundImage: event.target.value })}
+                placeholder="/hero-tech-bg.png"
+                className="rounded-lg border border-[var(--surface-grey)] bg-white px-4 py-3 text-sm text-[var(--deep-navy)] outline-none focus:border-[var(--gold)]"
+              />
+            </label>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 export default function Admin() {
   const [searchParams] = useSearchParams();
   const [unlocked, setUnlocked] = useState(isAdminUnlocked());
@@ -542,6 +587,8 @@ export default function Admin() {
             design={theme.design}
             onChange={(nextDesign) => setTheme((value) => ({ ...value, design: nextDesign }))}
           />
+
+          <HeroBackgrounds pages={content.pages} onUpdateSection={updateSection} />
 
           <div className="rounded-xl border border-[var(--surface-grey)] bg-white p-6 shadow-lg shadow-slate-900/10">
             <div className="mb-6 flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
