@@ -5,12 +5,14 @@ import {
   getTheme,
   isAdminUnlocked,
   lockAdmin,
+  getAdminPassword,
   resetCms,
   saveSiteContent,
   saveTheme,
   unlockAdmin,
 } from '../data/cms';
 import { defaultSiteContent, siteContent } from '../data/content';
+import { saveLiveCms } from '../data/liveCms';
 
 const colorFields = [
   ['deepNavy', 'Deep Navy'],
@@ -372,11 +374,16 @@ export default function Admin() {
   const fileInputRef = useRef(null);
   const contentSize = useMemo(() => JSON.stringify(content).length.toLocaleString(), [content]);
 
-  const saveCurrentChanges = useCallback(() => {
+  const saveCurrentChanges = useCallback(async () => {
     const parsedContent = advancedOpen ? JSON.parse(contentJson) : content;
     saveSiteContent(parsedContent);
     saveTheme(theme);
-    setStatus('Saved. Open the public pages in this same browser to see the updates.');
+    await saveLiveCms({
+      content: parsedContent,
+      theme,
+      adminPassword: getAdminPassword(),
+    });
+    setStatus('Saved locally and to live storage.');
     setError('');
   }, [advancedOpen, content, contentJson, theme]);
 
@@ -391,11 +398,24 @@ export default function Admin() {
     setError('Invalid admin password.');
   }
 
-  function handleSave(event) {
+  async function handleSave(event) {
     event.preventDefault();
 
     try {
-      saveCurrentChanges();
+      await saveCurrentChanges();
+      window.location.reload();
+    } catch (error) {
+      setError(error.message || 'Content JSON is not valid. Fix the JSON before saving.');
+    }
+  }
+
+  async function handleLocalOnlySave() {
+    try {
+      const parsedContent = advancedOpen ? JSON.parse(contentJson) : content;
+      saveSiteContent(parsedContent);
+      saveTheme(theme);
+      setStatus('Saved locally only. Live storage was not updated.');
+      setError('');
       window.location.reload();
     } catch {
       setError('Content JSON is not valid. Fix the JSON before saving.');
@@ -408,11 +428,9 @@ export default function Admin() {
     function handleKeyDown(event) {
       if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 's') {
         event.preventDefault();
-        try {
-          saveCurrentChanges();
-        } catch {
-          setError('Content JSON is not valid. Fix the JSON before saving.');
-        }
+        saveCurrentChanges().catch((error) => {
+          setError(error.message || 'Content JSON is not valid. Fix the JSON before saving.');
+        });
       }
     }
 
@@ -728,6 +746,9 @@ export default function Admin() {
 
           <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap">
             <button type="submit" className="btn-primary">Save changes</button>
+            <button type="button" onClick={handleLocalOnlySave} className="btn-secondary !border-[var(--mid-navy)] !text-[var(--deep-navy)] hover:!bg-white">
+              Save local only
+            </button>
             <button type="button" onClick={handleExport} className="btn-secondary !border-[var(--mid-navy)] !text-[var(--deep-navy)] hover:!bg-white">
               Export backup
             </button>

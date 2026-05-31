@@ -1,7 +1,8 @@
 import { useEffect, useMemo, useState } from 'react';
 import { SiteContentContext } from './SiteContentContextValue';
 import { defaultSiteContent } from '../data/content';
-import { getSiteContent, getTheme } from '../data/cms';
+import { getSiteContent, getTheme, saveSiteContent, saveTheme } from '../data/cms';
+import { loadLiveCms } from '../data/liveCms';
 
 function applyTheme(theme) {
   const variableMap = {
@@ -79,15 +80,36 @@ export function SiteContentProvider({ children }) {
   const [source, setSource] = useState('local');
 
   useEffect(() => {
+    let cancelled = false;
+
+    async function loadLiveContent() {
+      const liveState = await loadLiveCms();
+      if (cancelled || !liveState) return;
+
+      if (liveState.content) {
+        setSiteContent(liveState.content);
+        saveSiteContent(liveState.content);
+      }
+
+      if (liveState.theme) {
+        setTheme(liveState.theme);
+        saveTheme(liveState.theme);
+      }
+
+      setSource('live');
+    }
+
     function handleStorage() {
       setSiteContent(getSiteContent(defaultSiteContent));
       setTheme(getTheme());
       setSource('local');
     }
 
+    loadLiveContent();
     window.addEventListener('storage', handleStorage);
 
     return () => {
+      cancelled = true;
       window.removeEventListener('storage', handleStorage);
     };
   }, []);

@@ -1,5 +1,3 @@
-import { saveSiteContentToUpstash, loadSiteContentFromUpstash, saveThemeToUpstash, loadThemeFromUpstash } from '../services/upstashService';
-
 export const defaultTheme = {
   deepNavy: '#0B1120',
   midNavy: '#1A2E52',
@@ -22,6 +20,7 @@ export const defaultTheme = {
 const contentKey = 'thevalluru:content';
 const themeKey = 'thevalluru:theme';
 const adminKey = 'thevalluru:admin';
+const adminPasswordKey = 'thevalluru:admin-password';
 
 function canUseStorage() {
   return typeof window !== 'undefined' && window.localStorage;
@@ -63,15 +62,11 @@ export function getTheme() {
 export function saveSiteContent(content) {
   if (!canUseStorage()) return;
   window.localStorage.setItem(contentKey, JSON.stringify(content));
-  // Save to Upstash in the background
-  saveSiteContentToUpstash(content).catch(err => console.error('Upstash save failed:', err));
 }
 
 export function saveTheme(theme) {
   if (!canUseStorage()) return;
   window.localStorage.setItem(themeKey, JSON.stringify(theme));
-  // Save to Upstash in the background
-  saveThemeToUpstash(theme).catch(err => console.error('Upstash save failed:', err));
 }
 
 export function resetCms() {
@@ -84,8 +79,9 @@ export function isAdminUnlocked() {
 }
 
 export function unlockAdmin(password) {
-  if (password === 'admin') {
+  if (password.trim()) {
     window.localStorage.setItem(adminKey, 'true');
+    window.sessionStorage.setItem(adminPasswordKey, password);
     return true;
   }
 
@@ -94,33 +90,10 @@ export function unlockAdmin(password) {
 
 export function lockAdmin() {
   window.localStorage.removeItem(adminKey);
+  window.sessionStorage.removeItem(adminPasswordKey);
 }
 
-// Firebase sync functions
-export async function syncContentFromUpstash(defaultContent) {
-  try {
-    const upstashContent = await loadSiteContentFromUpstash();
-    if (upstashContent) {
-      if (!canUseStorage()) return upstashContent;
-      window.localStorage.setItem(contentKey, JSON.stringify(upstashContent));
-      return upstashContent;
-    }
-  } catch (error) {
-    console.error('Error syncing content from Upstash:', error);
-  }
-  return null;
-}
-
-export async function syncThemeFromUpstash() {
-  try {
-    const upstashTheme = await loadThemeFromUpstash();
-    if (upstashTheme) {
-      if (!canUseStorage()) return upstashTheme;
-      window.localStorage.setItem(themeKey, JSON.stringify(upstashTheme));
-      return upstashTheme;
-    }
-  } catch (error) {
-    console.error('Error syncing theme from Upstash:', error);
-  }
-  return null;
+export function getAdminPassword() {
+  if (!canUseStorage()) return '';
+  return window.sessionStorage.getItem(adminPasswordKey) || '';
 }
