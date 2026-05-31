@@ -1,4 +1,4 @@
-import { saveSiteContentToFirebase, loadSiteContentFromFirebase, saveThemeToFirebase, loadThemeFromFirebase } from '../services/firebaseService';
+import { saveSiteContentToKV, loadSiteContentFromKV, saveThemeToKV, loadThemeFromKV } from '../services/kvService';
 
 export const defaultTheme = {
   deepNavy: '#0B1120',
@@ -63,15 +63,15 @@ export function getTheme() {
 export function saveSiteContent(content) {
   if (!canUseStorage()) return;
   window.localStorage.setItem(contentKey, JSON.stringify(content));
-  // Save to Firebase in the background
-  saveSiteContentToFirebase(content).catch(err => console.error('Firebase save failed:', err));
+  // Save to Vercel KV in the background
+  saveSiteContentToKV(content).catch(err => console.error('KV save failed:', err));
 }
 
 export function saveTheme(theme) {
   if (!canUseStorage()) return;
   window.localStorage.setItem(themeKey, JSON.stringify(theme));
-  // Save to Firebase in the background
-  saveThemeToFirebase(theme).catch(err => console.error('Firebase save failed:', err));
+  // Save to Vercel KV in the background
+  saveThemeToKV(theme).catch(err => console.error('KV save failed:', err));
 }
 
 export function resetCms() {
@@ -97,30 +97,30 @@ export function lockAdmin() {
 }
 
 // Firebase sync functions
-export async function syncContentFromFirebase(defaultContent) {
+export async function syncContentFromKV(defaultContent) {
   try {
-    const firebaseContent = await loadSiteContentFromFirebase();
-    if (firebaseContent) {
-      if (!canUseStorage()) return firebaseContent;
-      window.localStorage.setItem(contentKey, JSON.stringify(firebaseContent));
-      return firebaseContent;
+    const kvContent = await loadSiteContentFromKV();
+    if (kvContent) {
+      if (!canUseStorage()) return kvContent;
+      window.localStorage.setItem(contentKey, JSON.stringify(kvContent));
+      return kvContent;
     }
   } catch (error) {
-    console.error('Error syncing content from Firebase:', error);
+    console.error('Error syncing content from KV:', error);
   }
   return null;
 }
 
-export async function syncThemeFromFirebase() {
+export async function syncThemeFromKV() {
   try {
-    const firebaseTheme = await loadThemeFromFirebase();
-    if (firebaseTheme) {
-      if (!canUseStorage()) return firebaseTheme;
-      window.localStorage.setItem(themeKey, JSON.stringify(firebaseTheme));
-      return firebaseTheme;
+    const kvTheme = await loadThemeFromKV();
+    if (kvTheme) {
+      if (!canUseStorage()) return kvTheme;
+      window.localStorage.setItem(themeKey, JSON.stringify(kvTheme));
+      return kvTheme;
     }
   } catch (error) {
-    console.error('Error syncing theme from Firebase:', error);
+    console.error('Error syncing theme from KV:', error);
   }
   return null;
 }
