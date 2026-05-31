@@ -7,7 +7,7 @@ export default function CardSection({ section }) {
   return (
     <section className="dark-section">
       <div className="container-custom">
-        <div className="mb-4 text-sm font-semibold uppercase tracking-widest text-yellow-200">{section.eyebrow}</div>
+        <div className="eyebrow mb-4">{section.eyebrow}</div>
         <h2 className="section-title">{section.title}</h2>
         <p className="section-copy mb-12 mt-5">{section.body}</p>
 
@@ -15,8 +15,8 @@ export default function CardSection({ section }) {
           {section.cards?.map((card, idx) => (
             <div key={card.title} className="surface-card card-hover">
               <div className="number-badge mb-5">{idx + 1}</div>
-              <h3 className="mb-3 text-lg font-bold text-white">{card.title}</h3>
-              <p className="text-sm leading-relaxed text-blue-100">{card.body}</p>
+              <h3 className="mb-3 text-lg font-bold text-[#0B1120]">{card.title}</h3>
+              <p className="text-sm leading-relaxed text-[#6B7A99]">{card.body}</p>
             </div>
           ))}
         </div>
