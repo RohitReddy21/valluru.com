@@ -29,6 +29,17 @@ const panels = [
   ['pages', 'Pages'],
 ];
 
+const uploadableImageFields = new Set([
+  'imageurl',
+  'image',
+  'logourl',
+  'iconurl',
+  'mediaurl',
+  'backgroundimage',
+]);
+
+const uploadMaxBytes = 2.5 * 1024 * 1024;
+
 const designFields = [
   {
     key: 'sectionSpacing',
@@ -517,6 +528,83 @@ function NumberField({ label, value, onChange }) {
   );
 }
 
+function isUploadableImageField(label) {
+  return uploadableImageFields.has(String(label || '').toLowerCase());
+}
+
+function MediaUploadField({ label, value, onChange }) {
+  const [uploadError, setUploadError] = useState('');
+  const text = value ?? '';
+
+  function handleUpload(event) {
+    const file = event.target.files?.[0];
+    event.target.value = '';
+    if (!file) return;
+
+    if (!file.type.startsWith('image/')) {
+      setUploadError('Use an image file for this field.');
+      return;
+    }
+
+    if (file.size > uploadMaxBytes) {
+      setUploadError('Image is too large. Use an image under 2.5 MB.');
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = () => {
+      setUploadError('');
+      onChange(String(reader.result || ''));
+    };
+    reader.onerror = () => {
+      setUploadError('Could not read this file. Try another image.');
+    };
+    reader.readAsDataURL(file);
+  }
+
+  return (
+    <label className="grid gap-2">
+      <span className="text-sm font-bold text-[var(--deep-navy)]">{prettyLabel(label)}</span>
+      {text && (
+        <div className="flex items-center gap-3 rounded-lg border border-[var(--surface-grey)] bg-white p-3">
+          <img src={text} alt="" className="h-14 w-14 rounded-md object-contain" />
+          <span className="min-w-0 flex-1 truncate text-xs font-semibold text-[var(--muted-blue)]">{text}</span>
+        </div>
+      )}
+      <input
+        value={text}
+        onChange={(event) => onChange(event.target.value)}
+        placeholder="Paste image URL or upload from device"
+        className="rounded-lg border border-[var(--surface-grey)] bg-[var(--warm-white)] px-4 py-3 text-sm text-[var(--deep-navy)] outline-none focus:border-[var(--gold)]"
+      />
+      <div className="flex flex-wrap items-center gap-2">
+        <span className="relative inline-flex">
+          <input
+            type="file"
+            accept="image/*"
+            onChange={handleUpload}
+            className="absolute inset-0 cursor-pointer opacity-0"
+            aria-label={`Upload ${prettyLabel(label)}`}
+          />
+          <span className="rounded-md border border-[var(--gold)] bg-white px-3 py-2 text-xs font-bold text-[var(--deep-navy)]">
+            Upload from device
+          </span>
+        </span>
+        {text && (
+          <button
+            type="button"
+            className="rounded-md border border-red-200 bg-white px-3 py-2 text-xs font-bold text-red-700"
+            onClick={() => onChange('')}
+          >
+            Clear
+          </button>
+        )}
+      </div>
+      {uploadError && <span className="text-xs font-semibold text-red-700">{uploadError}</span>}
+    </label>
+  );
+}
+
 function FieldEditor({ label, value, onChange, depth = 0 }) {
   if (typeof value === 'boolean') {
     return <BooleanField label={label} value={value} onChange={onChange} />;
@@ -645,6 +733,10 @@ function FieldEditor({ label, value, onChange, depth = 0 }) {
     );
   }
 
+  if (isUploadableImageField(label)) {
+    return <MediaUploadField label={label} value={value} onChange={onChange} />;
+  }
+
   return <TextField label={label} value={value} onChange={onChange} />;
 }
 
@@ -704,15 +796,11 @@ function HeroBackgrounds({ pages, onUpdateSection }) {
                 className="rounded-lg border border-[var(--surface-grey)] bg-white px-4 py-3 text-sm text-[var(--deep-navy)] outline-none focus:border-[var(--gold)]"
               />
             </label>
-            <label className="grid gap-2">
-              <span className="text-sm font-bold text-[var(--deep-navy)]">Fallback image path</span>
-              <input
-                value={section.backgroundImage || ''}
-                onChange={(event) => onUpdateSection(pageKey, section.id, { backgroundImage: event.target.value })}
-                placeholder="/hero-tech-bg.png"
-                className="rounded-lg border border-[var(--surface-grey)] bg-white px-4 py-3 text-sm text-[var(--deep-navy)] outline-none focus:border-[var(--gold)]"
-              />
-            </label>
+            <MediaUploadField
+              label="backgroundImage"
+              value={section.backgroundImage || ''}
+              onChange={(value) => onUpdateSection(pageKey, section.id, { backgroundImage: value })}
+            />
           </div>
         ))}
       </div>
@@ -1139,15 +1227,11 @@ export default function Admin() {
                               className="rounded-lg border border-[var(--surface-grey)] bg-white px-4 py-3 text-sm text-[var(--deep-navy)] outline-none focus:border-[var(--gold)]"
                             />
                           </label>
-                          <label className="grid gap-2">
-                            <span className="text-sm font-bold text-[var(--deep-navy)]">Fallback background image path</span>
-                            <input
-                              value={section.backgroundImage || ''}
-                              onChange={(event) => updateSection(activePage, section.id, { backgroundImage: event.target.value })}
-                              placeholder="/hero-tech-bg.png"
-                              className="rounded-lg border border-[var(--surface-grey)] bg-white px-4 py-3 text-sm text-[var(--deep-navy)] outline-none focus:border-[var(--gold)]"
-                            />
-                          </label>
+                          <MediaUploadField
+                            label="backgroundImage"
+                            value={section.backgroundImage || ''}
+                            onChange={(value) => updateSection(activePage, section.id, { backgroundImage: value })}
+                          />
                         </div>
                       ))}
                     </div>
