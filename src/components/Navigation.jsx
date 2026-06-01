@@ -8,7 +8,7 @@ export default function Navigation() {
   const [isOpen, setIsOpen] = useState(false);
 
   const linkClass = ({ isActive }) => (
-    `rounded-md px-3 py-2 text-sm font-medium transition ${
+    `nav-link rounded-md px-3 py-2 text-sm font-medium transition ${
       isActive
         ? 'bg-[#F5F4F0] text-[#0B1120]'
         : 'text-[#F5F4F0] hover:bg-[#1A2E52] hover:text-[#C9A84C]'
@@ -18,12 +18,12 @@ export default function Navigation() {
   return (
     <nav className="sticky top-0 z-50 border-b border-[#1A2E52] bg-[#0B1120]/95 backdrop-blur">
       <div className="container-custom">
-        <div className="flex min-h-20 items-center justify-between gap-4">
-          <Link to="/" className="text-xl font-bold text-white sm:text-2xl" onClick={() => setIsOpen(false)}>
+        <div className="flex min-h-16 items-center justify-between gap-4 sm:min-h-20">
+          <Link to="/" className="min-w-0 text-lg font-bold text-white sm:text-2xl" onClick={() => setIsOpen(false)}>
             {brand.siteName}
           </Link>
 
-          <div className="hidden items-center gap-1 lg:flex">
+          <div className="hidden items-center gap-1 xl:flex">
             {nav.map((item) => (
               <NavLink key={item.href} to={item.href} className={linkClass}>
                 {item.label}
@@ -31,13 +31,13 @@ export default function Navigation() {
             ))}
           </div>
 
-          <Link to="/contact" className="btn-warm hidden lg:inline-flex">
+          <Link to="/contact" className="btn-warm hidden xl:inline-flex">
             Working Conversation
           </Link>
 
           <button
             type="button"
-            className="group inline-flex h-10 w-10 items-center justify-center rounded-md border border-[#1A2E52] text-[#F5F4F0] transition hover:border-[#C9A84C] hover:text-[#C9A84C] lg:hidden"
+            className="group inline-flex h-10 w-10 items-center justify-center rounded-md border border-[#1A2E52] text-[#F5F4F0] transition hover:border-[#C9A84C] hover:text-[#C9A84C] xl:hidden"
             aria-label="Toggle navigation"
             aria-expanded={isOpen}
             onClick={() => setIsOpen((value) => !value)}
@@ -64,7 +64,7 @@ export default function Navigation() {
         </div>
 
         {isOpen && (
-          <div className="grid gap-2 border-t border-[#1A2E52] py-4 lg:hidden">
+          <div className="nav-mobile-panel grid gap-2 border-t border-[#1A2E52] py-4 xl:hidden">
             {nav.map((item) => (
               <NavLink
                 key={item.href}

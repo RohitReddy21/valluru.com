@@ -158,7 +158,7 @@ function createArrayItem(label, items) {
 function normalizeDetailCardItem(item) {
   if (!isPlainObject(item) || Array.isArray(item.fields)) return item;
 
-  const baseKeys = ['title', 'company', 'lane', 'sector', 'icon', 'iconUrl', 'logoUrl', 'media', 'mediaUrl', 'mediaType'];
+  const baseKeys = ['title', 'company', 'lane', 'sector', 'icon', 'iconUrl', 'logoUrl', 'media', 'mediaUrl', 'mediaType', 'websiteUrl', 'url'];
   const base = Object.fromEntries(Object.entries(item).filter(([key]) => baseKeys.includes(key)));
   const fields = Object.entries(item)
     .filter(([key, value]) => (
@@ -175,6 +175,76 @@ function normalizeDetailCardItem(item) {
   return { ...base, fields };
 }
 
+function sectionName(section) {
+  return section.eyebrow || section.title || section.id;
+}
+
+function sectionSummary(section) {
+  if (section.type === 'contact-form') return `${section.fields?.length || 0} form fields`;
+  if (section.cards?.length) return `${section.cards.length} cards`;
+  if (section.items?.length) return `${section.items.length} detail cards`;
+  if (section.bullets?.length) return `${section.bullets.length} bullets`;
+  return prettyLabel(section.type || 'section');
+}
+
+function PageDashboard({ pages, activePage, onSelectSection }) {
+  return (
+    <div className="grid gap-5 lg:grid-cols-3">
+      {Object.entries(pages).map(([pageKey, page]) => {
+        const sections = page.sections || [];
+
+        return (
+          <article
+            key={pageKey}
+            className={`rounded-xl border bg-white p-5 shadow-lg shadow-slate-900/10 transition hover:-translate-y-1 hover:shadow-xl ${
+              activePage === pageKey ? 'border-[var(--gold)]' : 'border-[var(--surface-grey)]'
+            }`}
+          >
+            <div className="mb-4 flex items-start justify-between gap-3">
+              <div>
+                <p className="text-xs font-bold tracking-[0.18em] text-[var(--gold)]">{prettyLabel(pageKey)}</p>
+                <h3 className="mt-2 text-xl font-bold text-[var(--deep-navy)]">{page.title || prettyLabel(pageKey)}</h3>
+              </div>
+              <span className="rounded-full bg-[var(--warm-white)] px-3 py-1 text-xs font-bold text-[var(--muted-blue)]">
+                {sections.length} sections
+              </span>
+            </div>
+
+            <div className="grid gap-2">
+              {sections.slice(0, 4).map((section) => (
+                <button
+                  key={section.id}
+                  type="button"
+                  className="group flex items-center justify-between gap-3 rounded-lg border border-[var(--surface-grey)] bg-[var(--warm-white)] px-3 py-2 text-left transition hover:border-[var(--gold)] hover:bg-white"
+                  onClick={() => {
+                    onSelectSection(pageKey, section.id);
+                  }}
+                >
+                  <span className="min-w-0">
+                    <span className="block truncate text-sm font-bold text-[var(--deep-navy)]">{sectionName(section)}</span>
+                    <span className="text-xs font-semibold text-[var(--muted-blue)]">{sectionSummary(section)}</span>
+                  </span>
+                  <span className="text-sm font-black text-[var(--gold)] transition group-hover:translate-x-0.5">Edit</span>
+                </button>
+              ))}
+            </div>
+
+            <button
+              type="button"
+              className="mt-4 w-full rounded-lg border border-[var(--mid-navy)] px-4 py-2 text-sm font-bold text-[var(--deep-navy)] transition hover:border-[var(--gold)] hover:bg-[var(--warm-white)]"
+              onClick={() => {
+                onSelectSection(pageKey, sections[0]?.id);
+              }}
+            >
+              Open page editor
+            </button>
+          </article>
+        );
+      })}
+    </div>
+  );
+}
+
 function normalizeEditableContent(value) {
   if (!value?.pages) return value;
 
@@ -185,6 +255,7 @@ function normalizeEditableContent(value) {
         pageKey,
         {
           ...page,
+          blogs: pageKey === 'insights' ? (page.blogs || []) : page.blogs,
           sections: (page.sections || []).map((section) => (
             section.type === 'detail-cards'
               ? { ...section, items: (section.items || []).map(normalizeDetailCardItem) }
@@ -194,6 +265,160 @@ function normalizeEditableContent(value) {
       ]),
     ),
   };
+}
+
+function createBlogPost() {
+  const now = new Date();
+  return {
+    id: `blog-${now.getTime()}`,
+    title: 'New blog title',
+    subtitle: '',
+    category: 'AI Operations',
+    date: now.toISOString().slice(0, 10),
+    author: 'Sasidhar Valluru',
+    excerpt: 'Short summary for the blog card.',
+    body: 'Write the full blog here. Use blank lines between paragraphs.',
+    imageUrl: '',
+    imageAlt: '',
+    sourceUrl: '',
+    status: 'draft',
+    featured: false,
+  };
+}
+
+function BlogManager({ blogs = [], onChange }) {
+  const [activeBlogId, setActiveBlogId] = useState(blogs[0]?.id || '');
+  const activeBlog = blogs.find((blog) => blog.id === activeBlogId) || blogs[0];
+
+  function updateBlog(blogId, patch) {
+    onChange(blogs.map((blog) => (blog.id === blogId ? { ...blog, ...patch } : blog)));
+  }
+
+  function addBlog() {
+    const nextBlog = createBlogPost();
+    onChange([nextBlog, ...blogs]);
+    setActiveBlogId(nextBlog.id);
+  }
+
+  function duplicateBlog(blog) {
+    const nextBlog = {
+      ...blog,
+      id: `blog-${Date.now()}`,
+      title: `${blog.title} Copy`,
+      status: 'draft',
+      featured: false,
+    };
+    onChange([nextBlog, ...blogs]);
+    setActiveBlogId(nextBlog.id);
+  }
+
+  function deleteBlog(blogId) {
+    const nextBlogs = blogs.filter((blog) => blog.id !== blogId);
+    onChange(nextBlogs);
+    setActiveBlogId(nextBlogs[0]?.id || '');
+  }
+
+  return (
+    <div className="rounded-xl border border-[var(--surface-grey)] bg-white p-6 shadow-lg shadow-slate-900/10">
+      <div className="mb-6 flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+        <div>
+          <p className="eyebrow mb-2">Insights Blog Manager</p>
+          <h2 className="text-2xl font-bold text-[var(--deep-navy)]">Create, edit, publish, and delete blogs</h2>
+          <p className="mt-2 max-w-2xl text-sm text-[var(--muted-blue)]">
+            Draft posts stay hidden. Published posts appear on the Insights page after saving live.
+          </p>
+        </div>
+        <button type="button" className="btn-primary" onClick={addBlog}>Add blog</button>
+      </div>
+
+      <div className="grid gap-6 lg:grid-cols-[20rem_1fr]">
+        <div className="grid content-start gap-3">
+          {blogs.length === 0 && (
+            <div className="rounded-lg border border-[var(--surface-grey)] bg-[var(--warm-white)] p-4 text-sm font-semibold text-[var(--muted-blue)]">
+              No blogs yet. Click Add blog to start.
+            </div>
+          )}
+
+          {blogs.map((blog) => (
+            <button
+              key={blog.id}
+              type="button"
+              onClick={() => setActiveBlogId(blog.id)}
+              className={`rounded-lg border p-4 text-left transition hover:border-[var(--gold)] ${
+                activeBlog?.id === blog.id ? 'border-[var(--gold)] bg-white' : 'border-[var(--surface-grey)] bg-[var(--warm-white)]'
+              }`}
+            >
+              <span className="text-xs font-black tracking-[0.16em] text-[var(--gold)]">{blog.status || 'draft'}</span>
+              <span className="mt-2 block text-base font-bold text-[var(--deep-navy)]">{blog.title || 'Untitled blog'}</span>
+              <span className="mt-1 block text-xs font-semibold text-[var(--muted-blue)]">{blog.category || 'No category'} · {blog.date || 'No date'}</span>
+            </button>
+          ))}
+        </div>
+
+        {activeBlog && (
+          <div className="grid gap-5 rounded-xl border border-[var(--surface-grey)] bg-[var(--warm-white)] p-4">
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+              <div>
+                <h3 className="text-xl font-bold text-[var(--deep-navy)]">{activeBlog.title || 'Untitled blog'}</h3>
+                <p className="text-sm text-[var(--muted-blue)]">Blog ID: {activeBlog.id}</p>
+              </div>
+              <div className="flex flex-wrap gap-2">
+                <button type="button" className="rounded-md border border-[var(--surface-grey)] bg-white px-3 py-2 text-sm font-bold text-[var(--deep-navy)]" onClick={() => duplicateBlog(activeBlog)}>
+                  Duplicate
+                </button>
+                <button type="button" className="rounded-md border border-red-200 bg-white px-3 py-2 text-sm font-bold text-red-700" onClick={() => deleteBlog(activeBlog.id)}>
+                  Delete
+                </button>
+              </div>
+            </div>
+
+            <div className="grid gap-4 md:grid-cols-2">
+              <TextField label="title" value={activeBlog.title} onChange={(value) => updateBlog(activeBlog.id, { title: value })} />
+              <TextField label="subtitle" value={activeBlog.subtitle} onChange={(value) => updateBlog(activeBlog.id, { subtitle: value })} />
+              <TextField label="category" value={activeBlog.category} onChange={(value) => updateBlog(activeBlog.id, { category: value })} />
+              <label className="grid gap-2">
+                <span className="text-sm font-bold text-[var(--deep-navy)]">Date</span>
+                <input
+                  type="date"
+                  value={activeBlog.date || ''}
+                  onChange={(event) => updateBlog(activeBlog.id, { date: event.target.value })}
+                  className="rounded-lg border border-[var(--surface-grey)] bg-white px-4 py-3 text-sm text-[var(--deep-navy)] outline-none focus:border-[var(--gold)]"
+                />
+              </label>
+              <TextField label="author" value={activeBlog.author} onChange={(value) => updateBlog(activeBlog.id, { author: value })} />
+              <TextField label="imageUrl" value={activeBlog.imageUrl} onChange={(value) => updateBlog(activeBlog.id, { imageUrl: value })} />
+              <TextField label="imageAlt" value={activeBlog.imageAlt} onChange={(value) => updateBlog(activeBlog.id, { imageAlt: value })} />
+              <TextField label="sourceUrl" value={activeBlog.sourceUrl} onChange={(value) => updateBlog(activeBlog.id, { sourceUrl: value })} />
+              <label className="grid gap-2">
+                <span className="text-sm font-bold text-[var(--deep-navy)]">Status</span>
+                <select
+                  value={activeBlog.status || 'draft'}
+                  onChange={(event) => updateBlog(activeBlog.id, { status: event.target.value })}
+                  className="rounded-lg border border-[var(--surface-grey)] bg-white px-4 py-3 text-sm font-semibold text-[var(--deep-navy)] outline-none focus:border-[var(--gold)]"
+                >
+                  <option value="draft">Draft</option>
+                  <option value="published">Published</option>
+                </select>
+              </label>
+              <BooleanField label="featured" value={activeBlog.featured} onChange={(value) => updateBlog(activeBlog.id, { featured: value })} />
+              <div className="md:col-span-2">
+                <TextField label="excerpt" value={activeBlog.excerpt} onChange={(value) => updateBlog(activeBlog.id, { excerpt: value })} />
+              </div>
+              <label className="grid gap-2 md:col-span-2">
+                <span className="text-sm font-bold text-[var(--deep-navy)]">Blog Body</span>
+                <textarea
+                  value={activeBlog.body || ''}
+                  onChange={(event) => updateBlog(activeBlog.id, { body: event.target.value })}
+                  className="min-h-[22rem] rounded-lg border border-[var(--surface-grey)] bg-white px-4 py-3 text-sm leading-7 text-[var(--deep-navy)] outline-none focus:border-[var(--gold)]"
+                  placeholder="Write or paste your full blog here. Use blank lines between paragraphs."
+                />
+              </label>
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  );
 }
 
 function TextField({ label, value, onChange }) {
@@ -578,6 +803,13 @@ export default function Admin() {
     setContentJson(JSON.stringify(nextContent, null, 2));
   }
 
+  function updateInsightsBlogs(blogs) {
+    updatePage('insights', {
+      ...content.pages.insights,
+      blogs,
+    });
+  }
+
   function updateSection(pageKey, sectionId, sectionPatch) {
     const page = content.pages[pageKey];
     const nextSections = page.sections.map((section) => (section.id === sectionId ? { ...section, ...sectionPatch } : section));
@@ -585,6 +817,24 @@ export default function Admin() {
   }
 
   const heroSections = content.pages[activePage]?.sections?.filter((section) => section.type === 'hero' || section.type === 'page-hero') || [];
+
+  function jumpToSection(pageKey, sectionId) {
+    setActivePanel('pages');
+    setActivePage(pageKey);
+    if (!sectionId) return;
+
+    window.setTimeout(() => {
+      document.getElementById(`admin-${sectionId}`)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 80);
+  }
+
+  useEffect(() => {
+    const sectionId = searchParams.get('section');
+    const pageKey = searchParams.get('page');
+    if (unlocked && pageKey && sectionId) {
+      window.setTimeout(() => jumpToSection(pageKey, sectionId), 0);
+    }
+  }, [searchParams, unlocked]);
 
   if (!unlocked) {
     return (
@@ -671,6 +921,25 @@ export default function Admin() {
         </div>
 
         <form onSubmit={handleSave} className="grid gap-8">
+          <div className="rounded-xl border border-[var(--surface-grey)] bg-white p-6 shadow-lg shadow-slate-900/10">
+            <div className="mb-5 flex flex-col gap-2 md:flex-row md:items-end md:justify-between">
+              <div>
+                <p className="eyebrow mb-2">Page Dashboard</p>
+                <h2 className="text-2xl font-bold text-[var(--deep-navy)]">Jump into any page or section</h2>
+              </div>
+              <p className="max-w-sm text-sm text-[var(--muted-blue)]">
+                Use these cards for normal edits. Use advanced JSON only for bulk changes.
+              </p>
+            </div>
+            <PageDashboard
+              pages={content.pages}
+              activePage={activePage}
+              onSelectSection={jumpToSection}
+            />
+          </div>
+
+          <BlogManager blogs={content.pages.insights?.blogs || []} onChange={updateInsightsBlogs} />
+
           <div className="rounded-xl border border-[var(--surface-grey)] bg-white p-6 shadow-lg shadow-slate-900/10">
             <h2 className="mb-5 text-2xl font-bold text-[var(--deep-navy)]">Colors</h2>
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">

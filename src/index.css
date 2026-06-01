@@ -92,6 +92,33 @@
     @apply inline-flex items-center justify-center rounded-lg px-6 py-3 font-semibold shadow-lg shadow-slate-900/10 transition duration-300 hover:-translate-y-0.5 hover:brightness-105 hover:shadow-xl hover:shadow-slate-900/20 focus:outline-none focus:ring-2 focus:ring-offset-2;
   }
 
+  .nav-link {
+    position: relative;
+  }
+
+  .nav-link::after {
+    content: '';
+    position: absolute;
+    left: 0.75rem;
+    right: 0.75rem;
+    bottom: 0.35rem;
+    height: 1px;
+    background: var(--gold);
+    opacity: 0;
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: opacity 250ms ease, transform 250ms ease;
+  }
+
+  .nav-link:hover::after {
+    opacity: 0.8;
+    transform: scaleX(1);
+  }
+
+  .nav-mobile-panel {
+    animation: mobile-menu-in 220ms ease both;
+  }
+
   .card-hover {
     @apply transition duration-500 hover:-translate-y-2 hover:shadow-2xl hover:shadow-slate-900/20;
   }
@@ -122,6 +149,7 @@
     border-radius: var(--corner-radius);
     box-shadow: var(--card-shadow);
     @apply border p-6 pt-8 transition duration-500;
+    isolation: isolate;
   }
 
   .surface-card::before {
@@ -140,6 +168,61 @@
     transform: scaleX(0);
     transform-origin: left;
     transition: opacity 350ms ease, transform 500ms ease;
+  }
+
+  .surface-card > * {
+    position: relative;
+    z-index: 1;
+  }
+
+  .surface-card .logo-mark {
+    transition: transform 450ms ease, box-shadow 450ms ease, border-color 450ms ease;
+  }
+
+  .surface-card:hover .logo-mark {
+    border-color: var(--gold);
+    transform: translateY(-2px) scale(1.04);
+    box-shadow: 0 18px 30px rgb(15 23 42 / 0.16);
+  }
+
+  .detail-card {
+    @apply flex min-h-full flex-col;
+  }
+
+  .detail-chip {
+    background: var(--gold);
+    color: var(--deep-navy);
+    @apply rounded-full px-3 py-1 text-xs font-black;
+  }
+
+  .detail-chip-muted {
+    border: 1px solid var(--surface-grey);
+    background: var(--warm-white);
+    color: var(--muted-blue);
+  }
+
+  .detail-link {
+    margin-top: auto;
+    border-color: var(--gold);
+    color: var(--deep-navy);
+    @apply inline-flex w-fit items-center rounded-lg border px-4 py-2 text-sm font-bold transition hover:bg-[var(--gold)];
+  }
+
+  .blog-list-card {
+    border-color: var(--surface-grey);
+    background: #ffffff;
+    border-radius: var(--corner-radius);
+    box-shadow: 0 10px 28px rgb(15 23 42 / 0.08);
+    @apply border p-5 transition duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-slate-900/15;
+  }
+
+  .blog-list-card.is-active {
+    border-color: var(--gold);
+    box-shadow: 0 18px 38px rgb(15 23 42 / 0.14);
+  }
+
+  .blog-reader {
+    @apply p-6 sm:p-8;
   }
 
   .surface-card-light {
@@ -340,6 +423,17 @@
     }
   }
 
+  @keyframes mobile-menu-in {
+    from {
+      opacity: 0;
+      transform: translateY(-8px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
   @media (prefers-reduced-motion: reduce) {
     .scroll-reveal > .container-custom,
     .stagger-item,
@@ -367,10 +461,36 @@
   }
 
   @media (max-width: 640px) {
+    :root {
+      --section-spacing: 3.75rem;
+      --logo-size: 3.5rem;
+      --reveal-distance: 18px;
+    }
+
+    .section-title {
+      @apply text-3xl;
+    }
+
+    .section-copy {
+      @apply text-base;
+    }
+
+    .surface-card {
+      @apply p-5 pt-7;
+    }
+
     .admin-edit-button {
       top: 0.75rem;
       right: 0.75rem;
       @apply px-2 py-1 text-[0.7rem];
+    }
+  }
+
+  @media (max-width: 420px) {
+    .btn-primary,
+    .btn-secondary,
+    .btn-warm {
+      @apply w-full px-4;
     }
   }
 }

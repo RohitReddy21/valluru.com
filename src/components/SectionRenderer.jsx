@@ -65,6 +65,22 @@ function getDetailRows(item) {
     .map(([key, value]) => ({ label: formatKeyLabel(key), value }));
 }
 
+function formatDetailLabel(label) {
+  const cleanLabel = String(label || '').trim();
+  const labelMap = {
+    role: 'Role',
+    descriptor: 'Descriptor',
+    thesis: 'Thesis',
+    'operating role': 'Operating Role',
+    link: 'Link',
+    problem: 'Problem',
+    work: 'Work',
+    output: 'Output',
+  };
+
+  return labelMap[cleanLabel.toLowerCase()] || cleanLabel;
+}
+
 function CardMedia({ card }) {
   const logoUrl = card.logoUrl;
   const iconUrl = card.iconUrl;
@@ -288,14 +304,14 @@ function DetailCards({ section, pageKey }) {
             const rows = getDetailRows(item);
 
             return (
-              <article key={`${item.title || item.company || item.lane}-${idx}`} className="surface-card card-hover stagger-item">
+              <article key={`${item.title || item.company || item.lane}-${idx}`} className="surface-card detail-card card-hover stagger-item">
                 <CardHeader card={item} fallbackNumber={idx + 1} />
-                {hasText(item.sector) && <p className="mb-5 text-sm font-semibold text-[var(--muted-blue)]">{item.sector}</p>}
+                {hasText(item.sector) && <p className="mb-5 text-sm font-semibold leading-relaxed text-[var(--muted-blue)]">{item.sector}</p>}
                 {rows.length > 0 && (
                   <div className="space-y-4 text-sm leading-relaxed">
                     {rows.map((row, rowIndex) => (
                       <p key={`${row.label}-${rowIndex}`}>
-                        {hasText(row.label) && <span className="font-bold text-[var(--deep-navy)]">{row.label}: </span>}
+                        {hasText(row.label) && <span className="font-bold text-[var(--deep-navy)]">{formatDetailLabel(row.label)}: </span>}
                         <span className="text-[var(--muted-blue)]">{row.value}</span>
                       </p>
                     ))}

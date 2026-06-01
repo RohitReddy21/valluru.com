@@ -10,7 +10,7 @@ const withHeroMedia = (section) => ({
 });
 
 export const defaultSiteContent = {
-  _version: 5,
+  _version: 6,
   brand: {
     siteName: 'TheValluru.com',
     personName: 'Sasidhar Valluru',
@@ -370,6 +370,7 @@ export const defaultSiteContent = {
     },
     insights: {
       title: 'Insights',
+      blogs: [],
       sections: [
         withHeroMedia({
           id: 'insights-hero',
