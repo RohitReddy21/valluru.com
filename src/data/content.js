@@ -1,11 +1,13 @@
 import { getSiteContent } from './cms';
+import heroBackgroundVideo from '../assets/199827-911378618_medium.mp4';
 
 const heroBackground = '/hero-tech-bg.png';
+const heroVideo = heroBackgroundVideo;
 
 const withHeroMedia = (section) => ({
   ...section,
   backgroundImage: heroBackground,
-  backgroundVideo: '',
+  backgroundVideo: heroVideo,
   mediaItems: [],
 });
 

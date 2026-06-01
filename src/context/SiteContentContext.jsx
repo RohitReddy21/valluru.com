@@ -41,14 +41,14 @@ function applyTheme(theme) {
       expressive: '42px',
     },
     heroMediaOpacity: {
-      quiet: '0.12',
-      subtle: '0.2',
-      visible: '0.32',
+      quiet: '0.28',
+      subtle: '0.42',
+      visible: '0.58',
     },
     heroOverlay: {
-      medium: '0.72',
-      strong: '0.84',
-      heavy: '0.9',
+      medium: '0.48',
+      strong: '0.62',
+      heavy: '0.74',
     },
     fontScale: {
       compact: '0.94',

@@ -1,9 +1,11 @@
+import fallbackHeroVideo from '../assets/199827-911378618_medium.mp4';
+
 function isVideo(url = '') {
   return /\.(mp4|webm|ogg)$/i.test(url);
 }
 
 export function SectionBackground({ section }) {
-  const backgroundVideo = section.backgroundVideo;
+  const backgroundVideo = section.backgroundVideo || fallbackHeroVideo;
   const backgroundImage = section.backgroundImage || '/hero-tech-bg.png';
 
   return (

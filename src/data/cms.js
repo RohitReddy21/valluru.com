@@ -11,8 +11,8 @@ export const defaultTheme = {
     cornerRadius: 'soft',
     logoSize: 'medium',
     animationIntensity: 'normal',
-    heroMediaOpacity: 'subtle',
-    heroOverlay: 'strong',
+    heroMediaOpacity: 'visible',
+    heroOverlay: 'medium',
     fontScale: 'normal',
   },
 };
