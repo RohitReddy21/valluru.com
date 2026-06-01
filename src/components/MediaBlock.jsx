@@ -65,11 +65,12 @@ export function InlineMedia({ item, className = '' }) {
 }
 
 export function MediaGallery({ items }) {
-  if (!items?.length) return null;
+  const visibleItems = (items || []).filter((item) => !item.hidden);
+  if (!visibleItems.length) return null;
 
   return (
     <div className="mt-10 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
-      {items.map((item, index) => (
+      {visibleItems.map((item, index) => (
         <figure key={`${item.url || item.icon}-${index}`} className="surface-card-light">
           <InlineMedia item={item} />
           {(item.title || item.caption) && (

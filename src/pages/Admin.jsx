@@ -125,21 +125,43 @@ function createEmptyLike(value) {
   return '';
 }
 
+function moveArrayItem(items, fromIndex, toIndex) {
+  if (toIndex < 0 || toIndex >= items.length) return items;
+
+  const next = [...items];
+  const [item] = next.splice(fromIndex, 1);
+  next.splice(toIndex, 0, item);
+  return next;
+}
+
+function duplicateArrayItem(item) {
+  if (!isPlainObject(item)) return item;
+
+  return {
+    ...item,
+    id: item.id ? `${item.id}-copy-${Date.now()}` : undefined,
+    title: item.title ? `${item.title} Copy` : item.title,
+    label: item.label ? `${item.label} Copy` : item.label,
+  };
+}
+
 function createArrayItem(label, items) {
   if (label === 'sections') {
     return {
       id: `section-${Date.now()}`,
       type: 'cards',
+      hidden: false,
+      layout: 'grid',
       eyebrow: 'New Section',
       title: 'New section title',
       body: 'Add section copy here.',
-      cards: [{ icon: '01', iconUrl: '', logoUrl: '', title: 'New card', body: 'Add card copy here.', mediaUrl: '', mediaType: 'image' }],
+      cards: [{ hidden: false, icon: '01', iconUrl: '', logoUrl: '', title: 'New card', body: 'Add card copy here.', mediaUrl: '', mediaType: 'image' }],
       mediaItems: [],
     };
   }
 
-  if (label === 'cards') return { icon: '01', iconUrl: '', logoUrl: '', title: 'New card', body: 'Add card copy here.', mediaUrl: '', mediaType: 'image' };
-  if (label === 'items') return { icon: '01', iconUrl: '', logoUrl: '', title: 'New item', body: 'Add item copy here.', mediaUrl: '', mediaType: 'image' };
+  if (label === 'cards') return { hidden: false, icon: '01', iconUrl: '', logoUrl: '', title: 'New card', body: 'Add card copy here.', mediaUrl: '', mediaType: 'image' };
+  if (label === 'items') return { hidden: false, icon: '01', iconUrl: '', logoUrl: '', title: 'New item', body: 'Add item copy here.', mediaUrl: '', mediaType: 'image' };
   if (label === 'fields') {
     if (items.some((item) => Object.prototype.hasOwnProperty.call(item, 'value'))) {
       return { label: 'New label', value: 'New text' };
@@ -147,7 +169,7 @@ function createArrayItem(label, items) {
 
     return { label: 'New Field', name: `field${Date.now()}`, type: 'text', placeholder: 'Placeholder text' };
   }
-  if (label === 'mediaItems') return { type: 'image', url: '', alt: '', title: '', caption: '' };
+  if (label === 'mediaItems') return { hidden: false, type: 'image', url: '', alt: '', title: '', caption: '' };
   if (label === 'bullets') return 'New bullet';
   if (label === 'proofPoints') return 'New point';
 
@@ -158,7 +180,7 @@ function createArrayItem(label, items) {
 function normalizeDetailCardItem(item) {
   if (!isPlainObject(item) || Array.isArray(item.fields)) return item;
 
-  const baseKeys = ['title', 'company', 'lane', 'sector', 'icon', 'iconUrl', 'logoUrl', 'media', 'mediaUrl', 'mediaType', 'websiteUrl', 'url'];
+  const baseKeys = ['hidden', 'title', 'company', 'lane', 'sector', 'icon', 'iconUrl', 'logoUrl', 'media', 'mediaUrl', 'mediaType', 'websiteUrl', 'url'];
   const base = Object.fromEntries(Object.entries(item).filter(([key]) => baseKeys.includes(key)));
   const fields = Object.entries(item)
     .filter(([key, value]) => (
@@ -175,11 +197,37 @@ function normalizeDetailCardItem(item) {
   return { ...base, fields };
 }
 
+function normalizeArrayVisibility(items) {
+  return (items || []).map((item) => (
+    isPlainObject(item) && !Object.prototype.hasOwnProperty.call(item, 'hidden')
+      ? { hidden: false, ...item }
+      : item
+  ));
+}
+
+function normalizeSection(section) {
+  const nextSection = {
+    hidden: false,
+    layout: section.layout || 'default',
+    ...section,
+  };
+
+  if (nextSection.cards) nextSection.cards = normalizeArrayVisibility(nextSection.cards);
+  if (nextSection.items) nextSection.items = normalizeArrayVisibility(nextSection.items).map((item) => (
+    nextSection.type === 'detail-cards' ? normalizeDetailCardItem(item) : item
+  ));
+  if (nextSection.fields) nextSection.fields = normalizeArrayVisibility(nextSection.fields);
+  if (nextSection.mediaItems) nextSection.mediaItems = normalizeArrayVisibility(nextSection.mediaItems);
+
+  return nextSection;
+}
+
 function sectionName(section) {
   return section.eyebrow || section.title || section.id;
 }
 
 function sectionSummary(section) {
+  if (section.hidden) return 'Hidden section';
   if (section.type === 'contact-form') return `${section.fields?.length || 0} form fields`;
   if (section.cards?.length) return `${section.cards.length} cards`;
   if (section.items?.length) return `${section.items.length} detail cards`;
@@ -256,11 +304,7 @@ function normalizeEditableContent(value) {
         {
           ...page,
           blogs: pageKey === 'insights' ? (page.blogs || []) : page.blogs,
-          sections: (page.sections || []).map((section) => (
-            section.type === 'detail-cards'
-              ? { ...section, items: (section.items || []).map(normalizeDetailCardItem) }
-              : section
-          )),
+          sections: (page.sections || []).map(normalizeSection),
         },
       ]),
     ),
@@ -510,14 +554,59 @@ function FieldEditor({ label, value, onChange, depth = 0 }) {
               <div className="mb-3 flex items-center justify-between gap-3">
                 <span className="text-xs font-bold uppercase tracking-[0.18em] text-[var(--muted-blue)]">
                   {primitiveItems ? `Item ${index + 1}` : item.title || item.label || item.id || `Item ${index + 1}`}
+                  {item?.hidden ? ' - Hidden' : ''}
                 </span>
-                <button
-                  type="button"
-                  className="text-sm font-bold text-red-700"
-                  onClick={() => onChange(value.filter((_, itemIndex) => itemIndex !== index))}
-                >
-                  Remove
-                </button>
+                <div className="flex flex-wrap justify-end gap-2">
+                  <button
+                    type="button"
+                    className="rounded-md border border-[var(--surface-grey)] bg-white px-2 py-1 text-xs font-bold text-[var(--deep-navy)] disabled:opacity-40"
+                    disabled={index === 0}
+                    onClick={() => onChange(moveArrayItem(value, index, index - 1))}
+                  >
+                    Up
+                  </button>
+                  <button
+                    type="button"
+                    className="rounded-md border border-[var(--surface-grey)] bg-white px-2 py-1 text-xs font-bold text-[var(--deep-navy)] disabled:opacity-40"
+                    disabled={index === value.length - 1}
+                    onClick={() => onChange(moveArrayItem(value, index, index + 1))}
+                  >
+                    Down
+                  </button>
+                  {!primitiveItems && (
+                    <button
+                      type="button"
+                      className="rounded-md border border-[var(--surface-grey)] bg-white px-2 py-1 text-xs font-bold text-[var(--deep-navy)]"
+                      onClick={() => {
+                        const next = [...value];
+                        next.splice(index + 1, 0, duplicateArrayItem(item));
+                        onChange(next);
+                      }}
+                    >
+                      Duplicate
+                    </button>
+                  )}
+                  {!primitiveItems && Object.prototype.hasOwnProperty.call(item, 'hidden') && (
+                    <button
+                      type="button"
+                      className="rounded-md border border-[var(--surface-grey)] bg-white px-2 py-1 text-xs font-bold text-[var(--deep-navy)]"
+                      onClick={() => {
+                        const next = [...value];
+                        next[index] = { ...item, hidden: !item.hidden };
+                        onChange(next);
+                      }}
+                    >
+                      {item.hidden ? 'Show' : 'Hide'}
+                    </button>
+                  )}
+                  <button
+                    type="button"
+                    className="rounded-md border border-red-200 bg-white px-2 py-1 text-xs font-bold text-red-700"
+                    onClick={() => onChange(value.filter((_, itemIndex) => itemIndex !== index))}
+                  >
+                    Remove
+                  </button>
+                </div>
               </div>
               <FieldEditor
                 label={primitiveItems ? label : `item-${index + 1}`}

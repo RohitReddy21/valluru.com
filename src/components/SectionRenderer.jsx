@@ -258,7 +258,8 @@ function TextFlow({ section, pageKey }) {
 }
 
 function Cards({ section, pageKey }) {
-  const isFeatureGrid = section.cards?.length <= 3;
+  const visibleCards = (section.cards || []).filter((card) => !card.hidden);
+  const isFeatureGrid = visibleCards.length <= 3;
   const gridClass = isFeatureGrid ? 'grid gap-6 lg:grid-cols-3' : 'grid gap-6 md:grid-cols-2 xl:grid-cols-4';
 
   return (
@@ -269,7 +270,7 @@ function Cards({ section, pageKey }) {
         {hasText(section.body) && <p className="section-copy mb-12 mt-5">{section.body}</p>}
 
         <div className={gridClass}>
-          {section.cards?.map((card, idx) => (
+          {visibleCards.map((card, idx) => (
             <article key={`${card.title}-${idx}`} className="surface-card card-hover stagger-item">
               <CardHeader card={card} fallbackNumber={idx + 1} />
               {hasText(card.body) && <p className="text-sm leading-relaxed text-[var(--muted-blue)]">{card.body}</p>}
@@ -293,6 +294,8 @@ function Cards({ section, pageKey }) {
 }
 
 function DetailCards({ section, pageKey }) {
+  const visibleItems = (section.items || []).filter((item) => !item.hidden);
+
   return (
     <SectionShell section={section} pageKey={pageKey}>
       <div className="container-custom">
@@ -300,7 +303,7 @@ function DetailCards({ section, pageKey }) {
         {hasText(section.title) && <h2 className="section-title">{section.title}</h2>}
         {hasText(section.body) && <p className="section-copy mt-6">{section.body}</p>}
         <div className="mt-12 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {section.items?.map((item, idx) => {
+          {visibleItems.map((item, idx) => {
             const rows = getDetailRows(item);
 
             return (
@@ -327,6 +330,8 @@ function DetailCards({ section, pageKey }) {
 }
 
 function ContactForm({ section, pageKey }) {
+  const visibleFields = (section.fields || []).filter((field) => !field.hidden);
+
   return (
     <SectionShell section={section} pageKey={pageKey}>
       <div className="container-custom">
@@ -336,7 +341,7 @@ function ContactForm({ section, pageKey }) {
           {hasText(section.body) && <p className="section-copy mt-6">{section.body}</p>}
           <form className="mt-10 rounded-2xl border border-[var(--surface-grey)] bg-white p-4 shadow-2xl shadow-slate-900/10 sm:p-6 lg:p-8">
             <div className="grid gap-5 md:grid-cols-2">
-              {section.fields?.map((field) => (
+              {visibleFields.map((field) => (
                 <label key={field.name} className="field-card block">
                   <span className="mb-3 block text-base font-bold text-[var(--deep-navy)]">{field.label}</span>
                   {field.type === 'textarea' ? (
@@ -368,6 +373,7 @@ function ContactForm({ section, pageKey }) {
 }
 
 export default function SectionRenderer({ section, pageKey }) {
+  if (section.hidden) return null;
   if (section.type === 'hero') return <Hero section={section} pageKey={pageKey} />;
   if (section.type === 'page-hero') return <PageHero section={section} pageKey={pageKey} />;
   if (section.type === 'text-flow') return <TextFlow section={section} pageKey={pageKey} />;
