@@ -140,13 +140,60 @@ function createArrayItem(label, items) {
 
   if (label === 'cards') return { icon: '01', iconUrl: '', logoUrl: '', title: 'New card', body: 'Add card copy here.', mediaUrl: '', mediaType: 'image' };
   if (label === 'items') return { icon: '01', iconUrl: '', logoUrl: '', title: 'New item', body: 'Add item copy here.', mediaUrl: '', mediaType: 'image' };
-  if (label === 'fields') return { label: 'New Field', name: `field${Date.now()}`, type: 'text', placeholder: 'Placeholder text' };
+  if (label === 'fields') {
+    if (items.some((item) => Object.prototype.hasOwnProperty.call(item, 'value'))) {
+      return { label: 'New label', value: 'New text' };
+    }
+
+    return { label: 'New Field', name: `field${Date.now()}`, type: 'text', placeholder: 'Placeholder text' };
+  }
   if (label === 'mediaItems') return { type: 'image', url: '', alt: '', title: '', caption: '' };
   if (label === 'bullets') return 'New bullet';
   if (label === 'proofPoints') return 'New point';
 
   if (!items.length) return '';
   return createEmptyLike(items[items.length - 1]);
+}
+
+function normalizeDetailCardItem(item) {
+  if (!isPlainObject(item) || Array.isArray(item.fields)) return item;
+
+  const baseKeys = ['title', 'company', 'lane', 'sector', 'icon', 'iconUrl', 'logoUrl', 'media', 'mediaUrl', 'mediaType'];
+  const base = Object.fromEntries(Object.entries(item).filter(([key]) => baseKeys.includes(key)));
+  const fields = Object.entries(item)
+    .filter(([key, value]) => (
+      !baseKeys.includes(key) &&
+      value !== null &&
+      value !== undefined &&
+      String(value).trim().length > 0
+    ))
+    .map(([key, value]) => ({
+      label: prettyLabel(key),
+      value: String(value),
+    }));
+
+  return { ...base, fields };
+}
+
+function normalizeEditableContent(value) {
+  if (!value?.pages) return value;
+
+  return {
+    ...value,
+    pages: Object.fromEntries(
+      Object.entries(value.pages).map(([pageKey, page]) => [
+        pageKey,
+        {
+          ...page,
+          sections: (page.sections || []).map((section) => (
+            section.type === 'detail-cards'
+              ? { ...section, items: (section.items || []).map(normalizeDetailCardItem) }
+              : section
+          )),
+        },
+      ]),
+    ),
+  };
 }
 
 function TextField({ label, value, onChange }) {
@@ -367,11 +414,11 @@ export default function Admin() {
   const [status, setStatus] = useState('');
   const [liveStatus, setLiveStatus] = useState('');
   const [theme, setTheme] = useState(() => getTheme());
-  const [content, setContent] = useState(() => siteContent);
+  const [content, setContent] = useState(() => normalizeEditableContent(siteContent));
   const [activePanel, setActivePanel] = useState(() => (searchParams.get('page') ? 'pages' : 'brand'));
   const [activePage, setActivePage] = useState(() => searchParams.get('page') || 'home');
   const [advancedOpen, setAdvancedOpen] = useState(false);
-  const [contentJson, setContentJson] = useState(() => JSON.stringify(siteContent, null, 2));
+  const [contentJson, setContentJson] = useState(() => JSON.stringify(normalizeEditableContent(siteContent), null, 2));
   const fileInputRef = useRef(null);
   const contentSize = useMemo(() => JSON.stringify(content).length.toLocaleString(), [content]);
 
@@ -470,8 +517,8 @@ export default function Admin() {
   function handleReset() {
     resetCms();
     setTheme(defaultTheme);
-    setContent(defaultSiteContent);
-    setContentJson(JSON.stringify(defaultSiteContent, null, 2));
+    setContent(normalizeEditableContent(defaultSiteContent));
+    setContentJson(JSON.stringify(normalizeEditableContent(defaultSiteContent), null, 2));
     window.location.reload();
   }
 
@@ -498,7 +545,7 @@ export default function Admin() {
     reader.onload = () => {
       try {
         const imported = JSON.parse(reader.result);
-        const nextContent = imported.content || imported;
+        const nextContent = normalizeEditableContent(imported.content || imported);
         const nextTheme = imported.theme || theme;
         setContent(nextContent);
         setContentJson(JSON.stringify(nextContent, null, 2));

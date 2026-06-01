@@ -1,5 +1,17 @@
 const apiPath = '/api/site-content';
 
+async function readResponsePayload(response) {
+  const text = await response.text();
+
+  if (!text) return {};
+
+  try {
+    return JSON.parse(text);
+  } catch {
+    return { error: text.slice(0, 500) };
+  }
+}
+
 export async function loadLiveCms() {
   try {
     const response = await fetch(apiPath, {
@@ -22,7 +34,7 @@ export async function checkLiveCms() {
       headers: { Accept: 'application/json' },
       cache: 'no-store',
     });
-    const data = await response.json().catch(() => ({}));
+    const data = await readResponsePayload(response);
 
     return {
       ok: response.ok,
@@ -55,9 +67,9 @@ export async function saveLiveCms({ content, theme, adminPassword }) {
   });
 
   if (!response.ok) {
-    const data = await response.json().catch(() => ({}));
-    throw new Error(data.error || 'Live save failed.');
+    const data = await readResponsePayload(response);
+    throw new Error(data.error || `Live save failed with HTTP ${response.status}.`);
   }
 
-  return response.json();
+  return readResponsePayload(response);
 }

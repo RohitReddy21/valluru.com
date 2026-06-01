@@ -33,6 +33,38 @@ function SectionShell({ section, pageKey, children, className = 'dark-section' }
   );
 }
 
+function hasText(value) {
+  return typeof value === 'string' ? value.trim().length > 0 : Boolean(value);
+}
+
+function formatKeyLabel(key) {
+  return key
+    .replace(/([A-Z])/g, ' $1')
+    .replace(/[-_]/g, ' ')
+    .trim()
+    .replace(/\b\w/g, (letter) => letter.toUpperCase());
+}
+
+function getDetailRows(item) {
+  if (Array.isArray(item.fields)) {
+    return item.fields
+      .map((field) => ({
+        label: field.label || '',
+        value: field.value ?? field.body ?? '',
+      }))
+      .filter((field) => hasText(field.value));
+  }
+
+  return Object.entries(item)
+    .filter(([key, value]) => (
+      !['title', 'company', 'lane', 'sector', 'icon', 'iconUrl', 'logoUrl', 'media', 'mediaUrl', 'mediaType', 'fields'].includes(key) &&
+      !Array.isArray(value) &&
+      typeof value !== 'object' &&
+      hasText(value)
+    ))
+    .map(([key, value]) => ({ label: formatKeyLabel(key), value }));
+}
+
 function CardMedia({ card }) {
   const logoUrl = card.logoUrl;
   const iconUrl = card.iconUrl;
@@ -73,7 +105,7 @@ function CardHeader({ card, fallbackNumber }) {
     return (
       <>
         <CardMedia card={card} />
-        <h3 className="mb-3 text-lg font-bold text-[var(--deep-navy)]">{title}</h3>
+        {hasText(title) && <h3 className="mb-3 text-lg font-bold text-[var(--deep-navy)]">{title}</h3>}
       </>
     );
   }
@@ -81,7 +113,7 @@ function CardHeader({ card, fallbackNumber }) {
   return (
     <div className="mb-4 flex items-center gap-4">
       {hasVisual ? <CardMedia card={card} /> : <div className="number-badge shrink-0">{fallbackNumber}</div>}
-      <h3 className="min-w-0 text-lg font-bold text-[var(--deep-navy)]">{title}</h3>
+      {hasText(title) && <h3 className="min-w-0 text-lg font-bold text-[var(--deep-navy)]">{title}</h3>}
     </div>
   );
 }
@@ -115,10 +147,10 @@ function Hero({ section, pageKey }) {
       <div className="hero-scan-line" aria-hidden="true"></div>
       <div className="container-custom relative z-10 grid items-center gap-12 lg:grid-cols-2">
         <div className="hero-copy space-y-6">
-          <div className="text-sm font-semibold uppercase tracking-widest text-[var(--gold)]">{section.eyebrow}</div>
-          <h1 className="max-w-4xl text-4xl font-bold leading-tight text-white sm:text-5xl md:text-6xl">{section.title}</h1>
-          <p className="max-w-2xl text-lg leading-relaxed text-[var(--warm-white)] sm:text-xl">{section.body}</p>
-          {section.supporting && (
+          {hasText(section.eyebrow) && <div className="text-sm font-semibold tracking-widest text-[var(--gold)]">{section.eyebrow}</div>}
+          {hasText(section.title) && <h1 className="max-w-4xl text-4xl font-bold leading-tight text-white sm:text-5xl md:text-6xl">{section.title}</h1>}
+          {hasText(section.body) && <p className="max-w-2xl text-lg leading-relaxed text-[var(--warm-white)] sm:text-xl">{section.body}</p>}
+          {hasText(section.supporting) && (
             <p className="max-w-2xl border-l-4 border-[var(--gold)] pl-5 text-base leading-relaxed text-[var(--warm-white)] sm:text-lg">
               {section.supporting}
             </p>
@@ -172,9 +204,9 @@ function PageHero({ section, pageKey }) {
       <div className="hero-scan-line" aria-hidden="true"></div>
       <div className="container-custom relative z-10">
         <div className={contentWidth}>
-          <div className="mb-4 text-sm font-semibold uppercase tracking-widest text-[var(--gold)]">{section.eyebrow}</div>
-          <h1 className={`mb-6 ${titleSize}`}>{section.title}</h1>
-          <p className="mb-8 text-lg leading-relaxed text-[var(--warm-white)] sm:text-xl">{section.body}</p>
+          {hasText(section.eyebrow) && <div className="mb-4 text-sm font-semibold tracking-widest text-[var(--gold)]">{section.eyebrow}</div>}
+          {hasText(section.title) && <h1 className={`mb-6 ${titleSize}`}>{section.title}</h1>}
+          {hasText(section.body) && <p className="mb-8 text-lg leading-relaxed text-[var(--warm-white)] sm:text-xl">{section.body}</p>}
           <CtaGroup section={section} />
         </div>
       </div>
@@ -186,11 +218,11 @@ function TextFlow({ section, pageKey }) {
   return (
     <SectionShell section={section} pageKey={pageKey}>
       <div className="container-custom">
-        <div className="eyebrow mb-4">{section.eyebrow}</div>
-        <h2 className="section-title">{section.title}</h2>
+        {hasText(section.eyebrow) && <div className="eyebrow mb-4">{section.eyebrow}</div>}
+        {hasText(section.title) && <h2 className="section-title">{section.title}</h2>}
         <div className="mt-12 grid gap-12 md:grid-cols-2">
           <div>
-            <p className="text-xl leading-relaxed text-[var(--muted-blue)]">{section.body}</p>
+            {hasText(section.body) && <p className="text-xl leading-relaxed text-[var(--muted-blue)]">{section.body}</p>}
           </div>
           <div className="surface-card">
             <ul className="space-y-3">
@@ -216,16 +248,16 @@ function Cards({ section, pageKey }) {
   return (
     <SectionShell section={section} pageKey={pageKey}>
       <div className="container-custom">
-        <div className="eyebrow mb-4">{section.eyebrow}</div>
-        <h2 className="section-title">{section.title}</h2>
-        {section.body && <p className="section-copy mb-12 mt-5">{section.body}</p>}
+        {hasText(section.eyebrow) && <div className="eyebrow mb-4">{section.eyebrow}</div>}
+        {hasText(section.title) && <h2 className="section-title">{section.title}</h2>}
+        {hasText(section.body) && <p className="section-copy mb-12 mt-5">{section.body}</p>}
 
         <div className={gridClass}>
           {section.cards?.map((card, idx) => (
             <article key={`${card.title}-${idx}`} className="surface-card card-hover stagger-item">
               <CardHeader card={card} fallbackNumber={idx + 1} />
-              <p className="text-sm leading-relaxed text-[var(--muted-blue)]">{card.body}</p>
-              {card.link && <p className="mt-5 rounded-lg bg-[var(--warm-white)] px-4 py-3 text-sm font-semibold text-[var(--deep-navy)]">{card.link}</p>}
+              {hasText(card.body) && <p className="text-sm leading-relaxed text-[var(--muted-blue)]">{card.body}</p>}
+              {hasText(card.link) && <p className="mt-5 rounded-lg bg-[var(--warm-white)] px-4 py-3 text-sm font-semibold text-[var(--deep-navy)]">{card.link}</p>}
             </article>
           ))}
         </div>
@@ -248,26 +280,30 @@ function DetailCards({ section, pageKey }) {
   return (
     <SectionShell section={section} pageKey={pageKey}>
       <div className="container-custom">
-        <div className="eyebrow mb-4">{section.eyebrow}</div>
-        <h2 className="section-title">{section.title}</h2>
-        {section.body && <p className="section-copy mt-6">{section.body}</p>}
+        {hasText(section.eyebrow) && <div className="eyebrow mb-4">{section.eyebrow}</div>}
+        {hasText(section.title) && <h2 className="section-title">{section.title}</h2>}
+        {hasText(section.body) && <p className="section-copy mt-6">{section.body}</p>}
         <div className="mt-12 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {section.items?.map((item, idx) => (
-            <article key={`${item.title || item.company || item.lane}-${idx}`} className="surface-card card-hover stagger-item">
-              <CardHeader card={item} fallbackNumber={idx + 1} />
-              {item.sector && <p className="mb-5 text-sm font-semibold text-[var(--muted-blue)]">{item.sector}</p>}
-              <div className="space-y-4 text-sm leading-relaxed">
-                {Object.entries(item)
-                  .filter(([key]) => !['title', 'company', 'lane', 'sector', 'icon', 'iconUrl', 'logoUrl', 'media', 'mediaUrl', 'mediaType'].includes(key))
-                  .map(([key, value]) => (
-                    <p key={key}>
-                      <span className="font-bold text-[var(--deep-navy)]">{key.replace(/([A-Z])/g, ' $1')}: </span>
-                      <span className="text-[var(--muted-blue)]">{value}</span>
-                    </p>
-                  ))}
-              </div>
-            </article>
-          ))}
+          {section.items?.map((item, idx) => {
+            const rows = getDetailRows(item);
+
+            return (
+              <article key={`${item.title || item.company || item.lane}-${idx}`} className="surface-card card-hover stagger-item">
+                <CardHeader card={item} fallbackNumber={idx + 1} />
+                {hasText(item.sector) && <p className="mb-5 text-sm font-semibold text-[var(--muted-blue)]">{item.sector}</p>}
+                {rows.length > 0 && (
+                  <div className="space-y-4 text-sm leading-relaxed">
+                    {rows.map((row, rowIndex) => (
+                      <p key={`${row.label}-${rowIndex}`}>
+                        {hasText(row.label) && <span className="font-bold text-[var(--deep-navy)]">{row.label}: </span>}
+                        <span className="text-[var(--muted-blue)]">{row.value}</span>
+                      </p>
+                    ))}
+                  </div>
+                )}
+              </article>
+            );
+          })}
         </div>
       </div>
     </SectionShell>
@@ -279,9 +315,9 @@ function ContactForm({ section, pageKey }) {
     <SectionShell section={section} pageKey={pageKey}>
       <div className="container-custom">
         <div className="mx-auto max-w-6xl">
-          <div className="eyebrow mb-4">{section.eyebrow}</div>
-          <h2 className="section-title">{section.title}</h2>
-          <p className="section-copy mt-6">{section.body}</p>
+          {hasText(section.eyebrow) && <div className="eyebrow mb-4">{section.eyebrow}</div>}
+          {hasText(section.title) && <h2 className="section-title">{section.title}</h2>}
+          {hasText(section.body) && <p className="section-copy mt-6">{section.body}</p>}
           <form className="mt-10 rounded-2xl border border-[var(--surface-grey)] bg-white p-4 shadow-2xl shadow-slate-900/10 sm:p-6 lg:p-8">
             <div className="grid gap-5 md:grid-cols-2">
               {section.fields?.map((field) => (

@@ -10,7 +10,7 @@ const withHeroMedia = (section) => ({
 });
 
 export const defaultSiteContent = {
-  _version: 4,
+  _version: 5,
   brand: {
     siteName: 'TheValluru.com',
     personName: 'Sasidhar Valluru',
@@ -241,31 +241,36 @@ export const defaultSiteContent = {
             {
               company: 'TechJignayasa',
               sector: 'AI adoption - Platform engineering - India execution',
-              role: 'Co-founder and Investor',
-              descriptor: 'Platform & execution partner',
-              thesis: 'Many companies want AI transformation. Few have the operating structure to deliver it.',
-              operatingRole: 'AI solution blueprints, platform engineering, India ODC/GCC execution, BPO/HIL delivery, application AI, workflow automation, and delivery governance.',
-              link: 'More soon',
+              fields: [
+                { label: 'Role', value: 'CEO and Investor' },
+                { label: 'Descriptor', value: 'Platform & execution partner' },
+                { label: 'Thesis', value: 'Many companies want AI transformation. Few have the operating structure to deliver it.' },
+                { label: 'Operating Role', value: 'AI solution blueprints, platform engineering, India ODC/GCC execution, BPO/HIL delivery, application AI, workflow automation, and delivery governance.' },
+                { label: 'Link', value: 'More soon' },
+              ],
               iconUrl: '', logoUrl: 'https://techjignyasa.com/assets/logo_white@2x-2-DnnDihkT.png', mediaUrl: '',
             },
             {
               company: 'PrimeVerse',
               sector: 'Venture / investment platform',
-              role: 'Active venture and investment portfolio',
-              descriptor: '',
-              thesis: 'Public positioning should be finalized based on current operating scope, market, and business problem.',
-              operatingRole: 'Define market served, technology role, operating model, investment thesis, and why the venture belongs in the portfolio.',
-              link: 'More soon',
+              fields: [
+                { label: 'Role', value: 'Active venture and investment portfolio' },
+                { label: 'Thesis', value: 'Public positioning should be finalized based on current operating scope, market, and business problem.' },
+                { label: 'Operating Role', value: 'Define market served, technology role, operating model, investment thesis, and why the venture belongs in the portfolio.' },
+                { label: 'Link', value: 'More soon' },
+              ],
               iconUrl: '', logoUrl: 'https://primeverse.in/assets/logo-ihOaMegF.jpeg', mediaUrl: '',
             },
             {
               company: 'VipasEnergy',
               sector: 'Energy and utility management',
-              role: 'Co-founder and Investor',
-              descriptor: 'Strategic capital & network',
-              thesis: 'Energy management is becoming a data, compliance, cost, and operating-intelligence problem.',
-              operatingRole: 'Utility expense management, greenhouse gas reporting, outsourced bill payment, analytics, tariff optimization, and enterprise workflow support.',
-              link: 'More soon',
+              fields: [
+                { label: 'Role', value: 'Investor' },
+                { label: 'Descriptor', value: 'Strategic capital & network' },
+                { label: 'Thesis', value: 'Energy management is becoming a data, compliance, cost, and operating-intelligence problem.' },
+                { label: 'Operating Role', value: 'Utility expense management, greenhouse gas reporting, outsourced bill payment, analytics, tariff optimization, and enterprise workflow support.' },
+                { label: 'Link', value: 'More soon' },
+              ],
               iconUrl: '', logoUrl: 'https://vipas-demo-iota.vercel.app/assets/logo-D8r5BTr7.png', mediaUrl: '',
             },
           ],
@@ -462,4 +467,3 @@ export const defaultSiteContent = {
 };
 
 export const siteContent = getSiteContent(defaultSiteContent);
-

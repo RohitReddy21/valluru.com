@@ -55,7 +55,7 @@
 
   .eyebrow {
     color: var(--gold);
-    @apply text-sm font-semibold uppercase tracking-widest;
+    @apply text-sm font-semibold tracking-widest;
   }
 
   .section-title {
