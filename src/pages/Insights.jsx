@@ -1,5 +1,4 @@
 import SectionRenderer from '../components/SectionRenderer';
-import BlogArchive from '../components/BlogArchive';
 import { useSiteContent } from '../context/useSiteContent';
 
 export default function Insights() {
@@ -11,7 +10,7 @@ export default function Insights() {
       {sections.map((section) => (
         <SectionRenderer key={section.id} section={section} pageKey="insights" />
       ))}
-      <BlogArchive blogs={siteContent.pages.insights.blogs} />
+      {/* BlogArchive is hidden for now. Use Admin CMS sections below for editable insight content. */}
     </div>
   );
 }
