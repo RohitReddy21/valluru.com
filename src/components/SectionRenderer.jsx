@@ -88,7 +88,7 @@ function CardMedia({ card }) {
 
   if (logoUrl) {
     return (
-      <div className="logo-mark mb-4">
+      <div className="logo-mark">
         <img src={logoUrl} alt={`${card.title || card.company || card.lane || 'Card'} logo`} />
       </div>
     );
@@ -156,16 +156,16 @@ function Hero({ section, pageKey }) {
     <SectionShell
       section={section}
       pageKey={pageKey}
-      className="relative flex min-h-[calc(100vh-80px)] items-center overflow-hidden bg-[var(--deep-navy)] py-16 sm:py-20"
+      className="relative flex min-h-[calc(100svh-80px)] items-center overflow-hidden bg-[var(--deep-navy)] py-12 sm:py-16 lg:py-14"
     >
       <SectionBackground section={section} />
       <div className="hero-motion-grid" aria-hidden="true"></div>
       <div className="hero-scan-line" aria-hidden="true"></div>
-      <div className="container-custom relative z-10 grid items-center gap-12 lg:grid-cols-2">
-        <div className="hero-copy space-y-6">
+      <div className="container-custom hero-layout relative z-10 grid items-center gap-10 lg:grid-cols-[minmax(0,1.18fr)_minmax(18rem,0.82fr)] xl:gap-14">
+        <div className="hero-copy space-y-5 sm:space-y-6">
           {hasText(section.eyebrow) && <div className="text-sm font-semibold tracking-widest text-[var(--gold)]">{section.eyebrow}</div>}
-          {hasText(section.title) && <h1 className="max-w-4xl text-4xl font-bold leading-tight text-white sm:text-5xl md:text-6xl">{section.title}</h1>}
-          {hasText(section.body) && <p className="max-w-2xl text-lg leading-relaxed text-[var(--warm-white)] sm:text-xl">{section.body}</p>}
+          {hasText(section.title) && <h1 className="max-w-3xl text-3xl font-bold leading-tight text-white sm:text-4xl md:text-5xl lg:text-[3.75rem]">{section.title}</h1>}
+          {hasText(section.body) && <p className="max-w-xl text-base leading-relaxed text-[var(--warm-white)] sm:text-lg">{section.body}</p>}
           {hasText(section.supporting) && (
             <p className="max-w-2xl border-l-4 border-[var(--gold)] pl-5 text-base leading-relaxed text-[var(--warm-white)] sm:text-lg">
               {section.supporting}
@@ -185,7 +185,7 @@ function Hero({ section, pageKey }) {
 
         <div className="hero-portrait flex justify-center lg:justify-end">
           {section.media?.url ? (
-            <div className="hero-portrait-frame w-[min(78vw,28rem)] lg:w-[30rem]">
+            <div className="hero-portrait-frame w-[min(76vw,20rem)] sm:w-[21rem] lg:w-[20.5rem] xl:w-[22rem]">
               <InlineMedia item={section.media} className="h-full w-full rounded-none object-cover" />
             </div>
           ) : (

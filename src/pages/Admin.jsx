@@ -15,13 +15,13 @@ import { defaultSiteContent, siteContent } from '../data/content';
 import { checkLiveCms, saveLiveCms } from '../data/liveCms';
 
 const colorFields = [
-  ['deepNavy', 'Deep Navy'],
-  ['midNavy', 'Mid Navy'],
-  ['gold', 'Gold Accent'],
-  ['warmWhite', 'Warm White'],
-  ['surfaceGrey', 'Surface Grey'],
-  ['mutedBlue', 'Muted Blue'],
-  ['accentCopper', 'Accent Copper'],
+  ['deepNavy', 'Charcoal'],
+  ['midNavy', 'Dark Grey'],
+  ['gold', 'LinkedIn Blue'],
+  ['warmWhite', 'LinkedIn Background'],
+  ['surfaceGrey', 'Divider Grey'],
+  ['mutedBlue', 'Muted Text'],
+  ['accentCopper', 'Deep Link Blue'],
 ];
 
 const panels = [

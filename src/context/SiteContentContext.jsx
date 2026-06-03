@@ -18,13 +18,13 @@ function applyTheme(theme) {
   const designMaps = {
     sectionSpacing: {
       compact: '3.5rem',
-      normal: '5rem',
-      spacious: '7rem',
+      normal: '6rem',
+      spacious: '7.5rem',
     },
     cardStyle: {
-      flat: '0 1px 2px rgb(74 63 53 / 0.08)',
-      elevated: '0 18px 38px rgb(74 63 53 / 0.14)',
-      premium: '0 28px 70px rgb(74 63 53 / 0.2)',
+      flat: '0 1px 2px rgb(29 34 38 / 0.08)',
+      elevated: '0 16px 34px rgb(29 34 38 / 0.1)',
+      premium: '0 26px 62px rgb(29 34 38 / 0.16)',
     },
     cornerRadius: {
       sharp: '0.375rem',

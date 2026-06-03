@@ -10,13 +10,13 @@ export default function Navigation() {
   const linkClass = ({ isActive }) => (
     `nav-link rounded-md px-3 py-2 text-sm font-medium transition ${
       isActive
-        ? 'bg-[#F5F4F0] text-[#2C2C2C]'
-        : 'text-[#F5F4F0] hover:bg-[#4A3F35] hover:text-[#B08D57]'
+        ? 'bg-[var(--warm-white)] text-[var(--deep-navy)]'
+        : 'text-[var(--warm-white)] hover:bg-[var(--mid-navy)] hover:text-[var(--gold)]'
     }`
   );
 
   return (
-    <nav className="sticky top-0 z-50 border-b border-[#4A3F35] bg-[#2C2C2C]/95 backdrop-blur">
+    <nav className="sticky top-0 z-50 border-b border-[var(--mid-navy)] bg-[var(--deep-navy)]/95 backdrop-blur">
       <div className="container-custom">
         <div className="flex min-h-16 items-center justify-between gap-4 sm:min-h-20">
           <Link to="/" className="min-w-0 text-lg font-bold text-white sm:text-2xl" onClick={() => setIsOpen(false)}>
@@ -37,7 +37,7 @@ export default function Navigation() {
 
           <button
             type="button"
-            className="group inline-flex h-10 w-10 items-center justify-center rounded-md border border-[#4A3F35] text-[#F5F4F0] transition hover:border-[#B08D57] hover:text-[#B08D57] xl:hidden"
+            className="group inline-flex h-10 w-10 items-center justify-center rounded-md border border-[var(--mid-navy)] text-[var(--warm-white)] transition hover:border-[var(--gold)] hover:text-[var(--gold)] xl:hidden"
             aria-label="Toggle navigation"
             aria-expanded={isOpen}
             onClick={() => setIsOpen((value) => !value)}
@@ -64,7 +64,7 @@ export default function Navigation() {
         </div>
 
         {isOpen && (
-          <div className="nav-mobile-panel grid gap-2 border-t border-[#4A3F35] py-4 xl:hidden">
+          <div className="nav-mobile-panel grid gap-2 border-t border-[var(--mid-navy)] py-4 xl:hidden">
             {nav.map((item) => (
               <NavLink
                 key={item.href}
