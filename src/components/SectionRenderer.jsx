@@ -185,11 +185,11 @@ function Hero({ section, pageKey }) {
 
         <div className="hero-portrait flex justify-center lg:justify-end">
           {section.media?.url ? (
-            <div className="aspect-square w-[min(78vw,28rem)] overflow-hidden rounded-full border border-[var(--mid-navy)] bg-[var(--mid-navy)] shadow-2xl shadow-black/30 lg:w-[30rem]">
+            <div className="hero-portrait-frame w-[min(78vw,28rem)] lg:w-[30rem]">
               <InlineMedia item={section.media} className="h-full w-full rounded-none object-cover" />
             </div>
           ) : (
-            <div className="flex aspect-square w-[min(78vw,28rem)] flex-col items-center justify-center rounded-full border border-[var(--mid-navy)] bg-[var(--mid-navy)] p-8 text-center shadow-2xl shadow-black/30 lg:w-[30rem]">
+            <div className="flex w-[min(78vw,28rem)] flex-col items-center justify-center rounded-lg border border-[var(--gold)]/30 bg-[var(--deep-navy)]/40 p-8 text-center lg:w-[30rem]">
               <div className="media-icon mb-5">SV</div>
               <p className="text-lg font-bold text-white">Add your image in admin</p>
               <p className="mt-2 max-w-sm text-sm leading-relaxed text-[var(--warm-white)]">

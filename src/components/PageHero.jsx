@@ -8,7 +8,7 @@ export default function PageHero({ section }) {
   const backgroundVideo = section.backgroundVideo || '/hero-background.mp4';
 
   return (
-    <section className="relative flex min-h-[46vh] items-center overflow-hidden border-b border-[#1A2E52] bg-[#0B1120] py-16 sm:py-20">
+    <section className="relative flex min-h-[46vh] items-center overflow-hidden border-b border-[#4A3F35] bg-[#2C2C2C] py-16 sm:py-20">
       <video
         className="absolute inset-0 h-full w-full object-cover opacity-30"
         autoPlay
@@ -19,11 +19,11 @@ export default function PageHero({ section }) {
       >
         <source src={backgroundVideo} type="video/mp4" />
       </video>
-      <div className="absolute inset-0 bg-[#0B1120]/75" aria-hidden="true"></div>
+      <div className="absolute inset-0 bg-[#2C2C2C]/75" aria-hidden="true"></div>
 
       <div className="container-custom relative z-10">
         <div className={contentWidth}>
-          <div className="mb-4 text-sm font-semibold uppercase tracking-widest text-[#C9A84C]">{section.eyebrow}</div>
+          <div className="mb-4 text-sm font-semibold uppercase tracking-widest text-[#B08D57]">{section.eyebrow}</div>
           <h1 className={`mb-6 ${titleSize}`}>
             {section.title}
           </h1>

@@ -15,7 +15,7 @@ export default function CardSection({ section }) {
           {section.cards?.map((card, idx) => (
             <div key={card.title} className="surface-card card-hover">
               <div className="number-badge mb-5">{idx + 1}</div>
-              <h3 className="mb-3 text-lg font-bold text-[#0B1120]">{card.title}</h3>
+              <h3 className="mb-3 text-lg font-bold text-[#2C2C2C]">{card.title}</h3>
               <p className="text-sm leading-relaxed text-[#6B7A99]">{card.body}</p>
             </div>
           ))}

@@ -21,6 +21,7 @@ const colorFields = [
   ['warmWhite', 'Warm White'],
   ['surfaceGrey', 'Surface Grey'],
   ['mutedBlue', 'Muted Blue'],
+  ['accentCopper', 'Accent Copper'],
 ];
 
 const panels = [

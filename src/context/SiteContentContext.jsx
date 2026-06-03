@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { SiteContentContext } from './SiteContentContextValue';
 import { defaultSiteContent } from '../data/content';
-import { getSiteContent, getTheme, saveSiteContent, saveTheme } from '../data/cms';
+import { getSiteContent, getTheme, normalizeTheme, saveSiteContent, saveTheme } from '../data/cms';
 import { loadLiveCms } from '../data/liveCms';
 
 function applyTheme(theme) {
@@ -12,6 +12,7 @@ function applyTheme(theme) {
     warmWhite: '--warm-white',
     surfaceGrey: '--surface-grey',
     mutedBlue: '--muted-blue',
+    accentCopper: '--accent-copper',
   };
 
   const designMaps = {
@@ -21,9 +22,9 @@ function applyTheme(theme) {
       spacious: '7rem',
     },
     cardStyle: {
-      flat: '0 1px 2px rgb(15 23 42 / 0.06)',
-      elevated: '0 18px 38px rgb(15 23 42 / 0.1)',
-      premium: '0 28px 70px rgb(15 23 42 / 0.16)',
+      flat: '0 1px 2px rgb(74 63 53 / 0.08)',
+      elevated: '0 18px 38px rgb(74 63 53 / 0.14)',
+      premium: '0 28px 70px rgb(74 63 53 / 0.2)',
     },
     cornerRadius: {
       sharp: '0.375rem',
@@ -31,9 +32,9 @@ function applyTheme(theme) {
       rounded: '1.25rem',
     },
     logoSize: {
-      small: '3rem',
-      medium: '4rem',
-      large: '5rem',
+      small: '5.25rem',
+      medium: '6.5rem',
+      large: '8rem',
     },
     animationIntensity: {
       calm: '14px',
@@ -92,8 +93,9 @@ export function SiteContentProvider({ children }) {
       }
 
       if (liveState.theme) {
-        setTheme(liveState.theme);
-        saveTheme(liveState.theme);
+        const normalizedTheme = normalizeTheme(liveState.theme);
+        setTheme(normalizedTheme);
+        saveTheme(normalizedTheme);
       }
 
       setSource('live');

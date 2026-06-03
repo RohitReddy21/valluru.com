@@ -1,15 +1,16 @@
 export const defaultTheme = {
-  deepNavy: '#0B1120',
-  midNavy: '#1A2E52',
-  gold: '#C9A84C',
-  warmWhite: '#F5F4F0',
-  surfaceGrey: '#E8E6E0',
-  mutedBlue: '#6B7A99',
+  deepNavy: '#2C2C2C',
+  midNavy: '#4A3F35',
+  gold: '#B08D57',
+  warmWhite: '#F8F4EC',
+  surfaceGrey: '#E8DDCB',
+  mutedBlue: '#4A3F35',
+  accentCopper: '#A66A3F',
   design: {
     sectionSpacing: 'normal',
     cardStyle: 'elevated',
     cornerRadius: 'soft',
-    logoSize: 'medium',
+    logoSize: 'large',
     animationIntensity: 'normal',
     heroMediaOpacity: 'visible',
     heroOverlay: 'medium',
@@ -21,6 +22,14 @@ const contentKey = 'thevalluru:content';
 const themeKey = 'thevalluru:theme';
 const adminKey = 'thevalluru:admin';
 const adminPasswordKey = 'thevalluru:admin-password';
+const oldDefaultPalette = {
+  deepNavy: '#0B1120',
+  midNavy: '#1A2E52',
+  gold: '#C9A84C',
+  warmWhite: '#F5F4F0',
+  surfaceGrey: '#E8E6E0',
+  mutedBlue: '#6B7A99',
+};
 
 function canUseStorage() {
   return typeof window !== 'undefined' && window.localStorage;
@@ -52,13 +61,31 @@ export function getSiteContent(defaultContent) {
 }
 
 export function getTheme() {
-  const storedTheme = readJson(themeKey, defaultTheme);
+  const storedTheme = normalizeTheme(readJson(themeKey, defaultTheme));
   return {
     ...defaultTheme,
     ...storedTheme,
     design: {
       ...defaultTheme.design,
       ...(storedTheme?.design || {}),
+    },
+  };
+}
+
+export function normalizeTheme(theme) {
+  if (!theme) return defaultTheme;
+
+  const usesOldDefaultPalette = Object.entries(oldDefaultPalette).every(([key, value]) => (
+    !theme[key] || String(theme[key]).toLowerCase() === value.toLowerCase()
+  ));
+
+  if (!usesOldDefaultPalette) return theme;
+
+  return {
+    ...defaultTheme,
+    design: {
+      ...defaultTheme.design,
+      ...(theme.design || {}),
     },
   };
 }

@@ -3,19 +3,20 @@
 
 @layer base {
   :root {
-    --deep-navy: #0b1120;
-    --mid-navy: #1a2e52;
-    --gold: #c9a84c;
-    --warm-white: #f5f4f0;
-    --surface-grey: #e8e6e0;
-    --muted-blue: #6b7a99;
+    --deep-navy: #2C2C2C;
+    --mid-navy: #4A3F35;
+    --gold: #B08D57;
+    --warm-white: #F8F4EC;
+    --surface-grey: #E8DDCB;
+    --muted-blue: #4A3F35;
+    --accent-copper: #A66A3F;
     --section-spacing: 5rem;
-    --card-shadow: 0 18px 38px rgb(15 23 42 / 0.1);
+    --card-shadow: 0 18px 38px rgb(74 63 53 / 0.14);
     --corner-radius: 0.75rem;
-    --logo-size: 4rem;
+    --logo-size: 8rem;
     --reveal-distance: 28px;
-    --hero-media-opacity: 0.2;
-    --hero-overlay-opacity: 0.84;
+    --hero-media-opacity: 0.58;
+    --hero-overlay-opacity: 0.48;
     --font-scale: 1;
   }
 
@@ -70,8 +71,9 @@
 
   .glass-effect {
     border-color: var(--surface-grey);
-    background: #ffffff;
-    @apply border shadow-sm shadow-slate-900/10;
+    background: color-mix(in srgb, #ffffff 78%, var(--warm-white));
+    @apply border;
+    box-shadow: 0 10px 28px rgb(74 63 53 / 0.08);
   }
 
   .btn-primary {
@@ -120,7 +122,11 @@
   }
 
   .card-hover {
-    @apply transition duration-500 hover:-translate-y-2 hover:shadow-2xl hover:shadow-slate-900/20;
+    @apply transition duration-500 hover:-translate-y-1;
+  }
+
+  .card-hover:hover {
+    box-shadow: 0 26px 60px rgb(74 63 53 / 0.2);
   }
 
   .number-badge {
@@ -144,7 +150,7 @@
     position: relative;
     overflow: hidden;
     border-color: var(--surface-grey);
-    background: #ffffff;
+    background: color-mix(in srgb, #ffffff 82%, var(--warm-white));
     color: var(--deep-navy);
     border-radius: var(--corner-radius);
     box-shadow: var(--card-shadow);
@@ -176,13 +182,12 @@
   }
 
   .surface-card .logo-mark {
-    transition: transform 450ms ease, box-shadow 450ms ease, border-color 450ms ease;
+    transition: transform 450ms ease, filter 450ms ease;
   }
 
   .surface-card:hover .logo-mark {
-    border-color: var(--gold);
-    transform: translateY(-2px) scale(1.04);
-    box-shadow: 0 18px 30px rgb(15 23 42 / 0.16);
+    transform: translateY(-1px);
+    filter: saturate(1.04) contrast(1.02);
   }
 
   .detail-card {
@@ -210,7 +215,7 @@
 
   .blog-list-card {
     border-color: var(--surface-grey);
-    background: #ffffff;
+    background: color-mix(in srgb, #ffffff 82%, var(--warm-white));
     border-radius: var(--corner-radius);
     box-shadow: 0 10px 28px rgb(15 23 42 / 0.08);
     @apply border p-5 transition duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-slate-900/15;
@@ -262,11 +267,11 @@
   }
 
   .logo-mark {
-    border-color: var(--surface-grey);
-    background: var(--warm-white);
-    width: var(--logo-size);
-    height: var(--logo-size);
-    @apply flex shrink-0 items-center justify-center rounded-full border p-2 shadow-md shadow-slate-900/10;
+    width: min(var(--logo-size), 42vw);
+    height: calc(var(--logo-size) * 0.42);
+    border: 0;
+    background: transparent;
+    @apply flex shrink-0 items-center justify-center rounded-none p-0 shadow-none;
   }
 
   .logo-mark img {
@@ -346,6 +351,19 @@
 
   .hero-portrait {
     animation: hero-media-in 1000ms ease 120ms both;
+  }
+
+  .hero-portrait-frame {
+    border: 1px solid rgba(176, 141, 87, 0.42);
+    background: rgba(74, 63, 53, 0.34);
+    box-shadow: 0 34px 80px rgb(0 0 0 / 0.28);
+    @apply overflow-hidden rounded-xl p-2;
+  }
+
+  .hero-portrait-frame .media-frame {
+    border: 0;
+    background: transparent;
+    @apply aspect-[4/5] h-full w-full rounded-lg object-cover;
   }
 
   .hero-motion-grid {
@@ -477,6 +495,11 @@
 
     .surface-card {
       @apply p-5 pt-7;
+    }
+
+    .logo-mark {
+      width: min(var(--logo-size), 58vw);
+      height: calc(var(--logo-size) * 0.48);
     }
 
     .admin-edit-button {

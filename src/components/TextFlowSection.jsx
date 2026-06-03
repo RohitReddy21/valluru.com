@@ -14,8 +14,8 @@ export default function TextFlowSection({ section }) {
             <ul className="space-y-3">
               {section.bullets?.map((bullet) => (
                 <li key={bullet} className="flex items-start gap-3">
-                  <span className="mt-2 h-2 w-2 shrink-0 rounded-full bg-[#C9A84C]"></span>
-                  <span className="text-[#0B1120]">{bullet}</span>
+                  <span className="mt-2 h-2 w-2 shrink-0 rounded-full bg-[#B08D57]"></span>
+                  <span className="text-[#2C2C2C]">{bullet}</span>
                 </li>
               ))}
             </ul>
