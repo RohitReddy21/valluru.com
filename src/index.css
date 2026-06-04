@@ -930,6 +930,12 @@
       @apply space-y-5;
     }
 
+    .hero-visual {
+      @apply w-full;
+      margin-top: 1.5rem;
+      margin-bottom: 1rem;
+    }
+
     .hero-badge {
       letter-spacing: 0.13em;
       @apply text-[0.72rem];
@@ -962,20 +968,21 @@
     }
 
     .executive-frame {
-      width: min(72vw, 18rem);
-      height: min(72vw, 18rem);
+      width: 100%;
+      height: auto;
       min-height: 0;
-      max-height: 18rem;
-      aspect-ratio: 1;
-      @apply rounded-full;
+      max-height: none;
+      aspect-ratio: auto;
+      @apply rounded-2xl;
     }
 
     .executive-portrait {
-      height: 100%;
+      height: auto;
       width: 100%;
-      object-fit: cover;
-      object-position: center top;
-      @apply rounded-full;
+      max-width: 100%;
+      object-fit: contain;
+      object-position: center;
+      @apply rounded-2xl;
     }
 
     .section-ambient {
