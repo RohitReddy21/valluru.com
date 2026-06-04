@@ -66,7 +66,7 @@ export default function HeroSection({ section }) {
                 src={section.media.url}
                 alt={section.media.alt || section.title}
                 onError={() => setImageFailed(true)}
-                className="h-full w-full object-cover"
+                className="h-full w-full object-cover rounded-full"
               />
             </div>
           ) : (
