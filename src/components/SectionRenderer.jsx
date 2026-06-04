@@ -3,9 +3,22 @@ import { useEffect, useRef, useState } from 'react';
 import AdminEditButton from './AdminEditButton';
 import { InlineMedia, MediaGallery, SectionBackground } from './MediaBlock';
 
+function getScrollMotion(section) {
+  if (section.type === 'hero' || section.type === 'page-hero') return 'hero';
+
+  const motions = ['rise', 'split', 'tilt', 'scale'];
+  const seed = String(section.id || section.title || section.type || '')
+    .split('')
+    .reduce((total, char) => total + char.charCodeAt(0), 0);
+
+  return motions[seed % motions.length];
+}
+
 function SectionShell({ section, pageKey, children, className = 'dark-section' }) {
   const [inView, setInView] = useState(false);
   const sectionRef = useRef(null);
+  const toneClass = section.tone ? `section-tone-${section.tone}` : 'section-tone-light';
+  const motionClass = `scroll-motion-${getScrollMotion(section)}`;
 
   useEffect(() => {
     const element = sectionRef.current;
@@ -26,7 +39,13 @@ function SectionShell({ section, pageKey, children, className = 'dark-section' }
   }, []);
 
   return (
-    <section ref={sectionRef} className={`editable-section scroll-reveal ${inView ? 'in-view' : ''} ${className}`} id={section.id}>
+    <section
+      ref={sectionRef}
+      className={`editable-section scroll-reveal ${toneClass} ${motionClass} ${inView ? 'in-view' : ''} ${className}`}
+      id={section.id}
+      data-section-type={section.type}
+    >
+      <div className="section-ambient" aria-hidden="true"></div>
       <AdminEditButton pageKey={pageKey} sectionId={section.id} />
       {children}
     </section>
@@ -89,7 +108,7 @@ function CardMedia({ card }) {
   if (logoUrl) {
     return (
       <div className="logo-mark">
-        <img src={logoUrl} alt={`${card.title || card.company || card.lane || 'Card'} logo`} />
+        <img src={logoUrl} alt={`${card.title || card.company || card.lane || 'Card'} logo`} loading="lazy" decoding="async" />
       </div>
     );
   }
@@ -97,7 +116,7 @@ function CardMedia({ card }) {
   if (iconUrl) {
     return (
       <div className="icon-image-mark mb-4">
-        <img src={iconUrl} alt={`${card.title || card.company || card.lane || 'Card'} icon`} />
+        <img src={iconUrl} alt={`${card.title || card.company || card.lane || 'Card'} icon`} loading="lazy" decoding="async" />
       </div>
     );
   }
@@ -149,55 +168,99 @@ function CtaGroup({ section }) {
   );
 }
 
-function Hero({ section, pageKey }) {
-  const proofPoints = section.proofPoints || ['Build', 'Back', 'Scale', 'Govern'];
+const heroExpertiseCards = [
+  { title: 'Applied AI', icon: 'AI' },
+  { title: 'Product Architecture', icon: 'PA' },
+  { title: 'Operating Model Design', icon: 'OM' },
+  { title: 'Enterprise Workflows', icon: 'EW' },
+  { title: 'Delivery Governance', icon: 'DG' },
+];
 
+function HeroVisual({ section, className = '' }) {
+  if (!section.media?.url) {
+    return (
+      <div className={`hero-visual ${className}`}> 
+        <div className="flex w-[min(78vw,28rem)] flex-col items-center justify-center rounded-lg border border-[var(--gold)]/30 bg-[var(--deep-navy)]/40 p-8 text-center lg:w-[30rem]">
+          <div className="media-icon mb-5">SV</div>
+          <p className="text-lg font-bold text-white">Add your image in admin</p>
+          <p className="mt-2 max-w-sm text-sm leading-relaxed text-[var(--warm-white)]">
+            Edit this section and set media.url to a file in public.
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className={`hero-visual ${className}`}>
+      <div className="executive-frame">
+        <img src={section.media.url} alt={section.media.alt || section.title || ''} className="executive-portrait mx-auto rounded-2xl" loading="eager" decoding="async" fetchPriority="high" />
+        <div className="expertise-stack" aria-label="Professional expertise">
+          {heroExpertiseCards.map((item, idx) => (
+            <div className="expertise-card" key={item.title} style={{ '--float-index': idx }}>
+              <span className="expertise-icon" aria-hidden="true">{item.icon}</span>
+              <span>{item.title}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+      <div className="expertise-chips" aria-label="Professional expertise">
+        {heroExpertiseCards.map((item) => (
+          <span className="expertise-chip" key={item.title}>{item.title}</span>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function Hero({ section, pageKey }) {
   return (
     <SectionShell
       section={section}
       pageKey={pageKey}
-      className="relative flex min-h-[calc(100svh-80px)] items-center overflow-hidden bg-[var(--deep-navy)] py-12 sm:py-16 lg:py-14"
+      className="personal-hero relative flex min-h-[calc(100svh-84px)] items-center overflow-hidden py-8 sm:py-10 lg:py-12"
     >
-      <SectionBackground section={section} />
-      <div className="hero-motion-grid" aria-hidden="true"></div>
-      <div className="hero-scan-line" aria-hidden="true"></div>
-      <div className="container-custom hero-layout relative z-10 grid items-center gap-10 lg:grid-cols-[minmax(0,1.18fr)_minmax(18rem,0.82fr)] xl:gap-14">
-        <div className="hero-copy space-y-5 sm:space-y-6">
-          {hasText(section.eyebrow) && <div className="text-sm font-semibold tracking-widest text-[var(--gold)]">{section.eyebrow}</div>}
-          {hasText(section.title) && <h1 className="max-w-3xl text-3xl font-bold leading-tight text-white sm:text-4xl md:text-5xl lg:text-[3.75rem]">{section.title}</h1>}
-          {hasText(section.body) && <p className="max-w-xl text-base leading-relaxed text-[var(--warm-white)] sm:text-lg">{section.body}</p>}
-          {hasText(section.supporting) && (
-            <p className="max-w-2xl border-l-4 border-[var(--gold)] pl-5 text-base leading-relaxed text-[var(--warm-white)] sm:text-lg">
-              {section.supporting}
-            </p>
+      {section.backgroundVideo && (
+        <video
+          className="hero-bg-video"
+          autoPlay
+          muted
+          loop
+          playsInline
+          preload="metadata"
+          poster={section.backgroundImage || '/hero-tech-bg.png'}
+          aria-hidden="true"
+        >
+          <source src={section.backgroundVideo} type="video/mp4" />
+        </video>
+      )}
+      <div className="hero-skyline" aria-hidden="true"></div>
+      <div className="hero-grid-pattern" aria-hidden="true"></div>
+      <div className="container-custom hero-layout relative z-10 grid items-center lg:min-h-[calc(100svh-180px)] lg:grid-cols-[minmax(0,0.82fr)_minmax(25rem,1fr)]">
+        <div className="hero-copy order-2 space-y-6 lg:order-1">
+          {hasText(section.eyebrow) && (
+            <div className="hero-badge">
+              {section.eyebrow}
+            </div>
           )}
+          <h1 className="hero-headline">
+            <span>Investor.</span>
+            <span>Operator.</span>
+            <span>AI Architect.</span>
+            <span className="text-[var(--gold)]">Executive Builder.</span>
+          </h1>
+          {hasText(section.body) && <p className="hero-description">{section.body}</p>}
 
-          <div className="grid max-w-2xl grid-cols-2 gap-3 pt-2 sm:grid-cols-4">
-            {proofPoints.map((point) => (
-              <div key={point} className="rounded-lg border border-[var(--mid-navy)] bg-[var(--mid-navy)] px-4 py-3 text-center">
-                <p className="text-sm font-bold text-white">{point}</p>
-              </div>
-            ))}
+          <HeroVisual section={section} className="lg:hidden" />
+
+          <div className="hero-actions">
+            {section.primaryCta && <Link to={section.primaryCta.href} className="hero-btn hero-btn-primary">{section.primaryCta.label} <span aria-hidden="true">-&gt;</span></Link>}
+            {section.secondaryCta && <Link to={section.secondaryCta.href} className="hero-btn hero-btn-secondary">{section.secondaryCta.label}</Link>}
+            {section.tertiaryCta && <Link to={section.tertiaryCta.href} className="hero-btn hero-btn-ghost">{section.tertiaryCta.label}</Link>}
           </div>
-
-          <CtaGroup section={section} />
         </div>
 
-        <div className="hero-portrait flex justify-center lg:justify-end">
-          {section.media?.url ? (
-            <div className="hero-portrait-frame w-[min(76vw,20rem)] sm:w-[21rem] lg:w-[20.5rem] xl:w-[22rem]">
-              <InlineMedia item={section.media} className="h-full w-full rounded-none object-cover" />
-            </div>
-          ) : (
-            <div className="flex w-[min(78vw,28rem)] flex-col items-center justify-center rounded-lg border border-[var(--gold)]/30 bg-[var(--deep-navy)]/40 p-8 text-center lg:w-[30rem]">
-              <div className="media-icon mb-5">SV</div>
-              <p className="text-lg font-bold text-white">Add your image in admin</p>
-              <p className="mt-2 max-w-sm text-sm leading-relaxed text-[var(--warm-white)]">
-                Edit this section and set media.url to a file in public.
-              </p>
-            </div>
-          )}
-        </div>
+        <HeroVisual section={section} className="hidden lg:flex lg:order-2" />
       </div>
     </SectionShell>
   );
@@ -237,13 +300,13 @@ function TextFlow({ section, pageKey }) {
         {hasText(section.eyebrow) && <div className="eyebrow mb-4">{section.eyebrow}</div>}
         {hasText(section.title) && <h2 className="section-title">{section.title}</h2>}
         <div className="mt-12 grid gap-12 md:grid-cols-2">
-          <div>
+          <div className="text-flow-copy stagger-item">
             {hasText(section.body) && <p className="text-xl leading-relaxed text-[var(--muted-blue)]">{section.body}</p>}
           </div>
-          <div className="surface-card">
+          <div className="surface-card text-flow-list stagger-item">
             <ul className="space-y-3">
-              {section.bullets?.map((bullet) => (
-                <li key={bullet} className="flex items-start gap-3">
+              {section.bullets?.map((bullet, idx) => (
+                <li key={bullet} className="stagger-child flex items-start gap-3" style={{ '--stagger-index': idx }}>
                   <span className="mt-2 h-2 w-2 shrink-0 rounded-full bg-[var(--gold)]"></span>
                   <span className="text-[var(--deep-navy)]">{bullet}</span>
                 </li>
