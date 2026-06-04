@@ -8,7 +8,7 @@ export default function HeroSection({ section }) {
   const backgroundVideo = section.backgroundVideo || '/hero-background.mp4';
 
   return (
-    <section className="relative flex min-h-[calc(100vh-80px)] items-center overflow-hidden bg-[var(--deep-navy)] py-16 sm:py-20">
+    <section className="relative flex sm:min-h-[calc(100vh-80px)] items-center overflow-hidden bg-[var(--deep-navy)] py-2 sm:py-4 md:py-8">>
       <video
         className="absolute inset-0 h-full w-full object-cover opacity-30"
         autoPlay
@@ -21,8 +21,8 @@ export default function HeroSection({ section }) {
       </video>
       <div className="absolute inset-0 bg-[var(--deep-navy)]/75" aria-hidden="true"></div>
 
-      <div className="container-custom relative z-10 grid items-center gap-12 lg:grid-cols-2">
-        <div className="space-y-6">
+      <div className="container-custom relative z-10 grid items-center gap-0 sm:gap-2 md:gap-8 lg:grid-cols-2">
+        <div className="space-y-2 sm:space-y-4">
           <div className="text-sm font-semibold uppercase tracking-widest text-[var(--gold)]">{section.eyebrow}</div>
           <h1 className="max-w-4xl text-4xl font-bold leading-tight text-white sm:text-5xl md:text-6xl">{section.title}</h1>
           <p className="max-w-2xl text-lg leading-relaxed text-[var(--warm-white)] sm:text-xl">{section.body}</p>
@@ -61,7 +61,7 @@ export default function HeroSection({ section }) {
 
         <div className="flex justify-center lg:justify-end">
           {showImage ? (
-            <div className="w-[min(78vw,28rem)] h-[min(78vw,28rem)] overflow-hidden rounded-full lg:w-[30rem] lg:h-[30rem]">
+            <div className="w-[min(80vw,20rem)] h-[min(80vw,20rem)] sm:w-[min(90vw,28rem)] sm:h-[min(90vw,28rem)] lg:w-[30rem] lg:h-[30rem] overflow-hidden rounded-full">
               <img
                 src={section.media.url}
                 alt={section.media.alt || section.title}
@@ -70,7 +70,7 @@ export default function HeroSection({ section }) {
               />
             </div>
           ) : (
-            <div className="flex w-[min(78vw,28rem)] h-[min(78vw,28rem)] flex-col items-center justify-center rounded-full border border-[var(--gold)]/30 bg-[var(--deep-navy)]/40 p-8 text-center lg:w-[30rem] lg:h-[30rem]">
+            <div className="flex w-[min(90vw,28rem)] h-[min(90vw,28rem)] flex-col items-center justify-center rounded-full border border-[var(--gold)]/30 bg-[var(--deep-navy)]/40 p-4 sm:p-6 lg:p-8 text-center lg:w-[30rem] lg:h-[30rem]">
               <div className="mb-5 h-24 w-24 rounded-lg bg-[var(--deep-navy)]/60"></div>
               <p className="text-lg font-bold text-white">Your image goes here</p>
               <p className="mt-2 max-w-sm text-sm leading-relaxed text-[var(--warm-white)]">
