@@ -8,7 +8,7 @@ export default function HeroSection({ section }) {
   const backgroundVideo = section.backgroundVideo || '/hero-background.mp4';
 
   return (
-    <section className="relative flex min-h-[calc(100vh-80px)] items-center overflow-hidden bg-[#2C2C2C] py-16 sm:py-20">
+    <section className="relative flex min-h-[calc(100vh-80px)] items-center overflow-hidden bg-[var(--deep-navy)] py-16 sm:py-20">
       <video
         className="absolute inset-0 h-full w-full object-cover opacity-30"
         autoPlay
@@ -19,22 +19,22 @@ export default function HeroSection({ section }) {
       >
         <source src={backgroundVideo} type="video/mp4" />
       </video>
-      <div className="absolute inset-0 bg-[#2C2C2C]/75" aria-hidden="true"></div>
+      <div className="absolute inset-0 bg-[var(--deep-navy)]/75" aria-hidden="true"></div>
 
       <div className="container-custom relative z-10 grid items-center gap-12 lg:grid-cols-2">
         <div className="space-y-6">
-          <div className="text-sm font-semibold uppercase tracking-widest text-[#B08D57]">{section.eyebrow}</div>
+          <div className="text-sm font-semibold uppercase tracking-widest text-[var(--gold)]">{section.eyebrow}</div>
           <h1 className="max-w-4xl text-4xl font-bold leading-tight text-white sm:text-5xl md:text-6xl">{section.title}</h1>
-          <p className="max-w-2xl text-lg leading-relaxed text-[#F5F4F0] sm:text-xl">{section.body}</p>
+          <p className="max-w-2xl text-lg leading-relaxed text-[var(--warm-white)] sm:text-xl">{section.body}</p>
           {section.supporting && (
-            <p className="max-w-2xl border-l-4 border-[#B08D57] pl-5 text-base leading-relaxed text-[#F5F4F0] sm:text-lg">
+            <p className="max-w-2xl border-l-4 border-[var(--gold)] pl-5 text-base leading-relaxed text-[var(--warm-white)] sm:text-lg">
               {section.supporting}
             </p>
           )}
 
           <div className="grid max-w-2xl grid-cols-2 gap-3 pt-2 sm:grid-cols-4">
             {proofPoints.map((point) => (
-              <div key={point} className="rounded-lg border border-[#4A3F35] bg-[#4A3F35] px-4 py-3 text-center">
+              <div key={point} className="rounded-lg border border-[var(--mid-navy)] bg-[var(--mid-navy)] px-4 py-3 text-center">
               <p className="text-sm font-bold text-white">{point}</p>
             </div>
             ))}
@@ -70,10 +70,10 @@ export default function HeroSection({ section }) {
               />
             </div>
           ) : (
-            <div className="flex w-[min(78vw,28rem)] flex-col items-center justify-center rounded-lg border border-[#B08D57]/30 bg-[#0B1120]/40 p-8 text-center lg:w-[30rem]">
-              <div className="mb-5 h-24 w-24 rounded-lg bg-[#0B1120]/60"></div>
+            <div className="flex w-[min(78vw,28rem)] flex-col items-center justify-center rounded-lg border border-[var(--gold)]/30 bg-[var(--deep-navy)]/40 p-8 text-center lg:w-[30rem]">
+              <div className="mb-5 h-24 w-24 rounded-lg bg-[var(--deep-navy)]/60"></div>
               <p className="text-lg font-bold text-white">Your image goes here</p>
-              <p className="mt-2 max-w-sm text-sm leading-relaxed text-[#F5F4F0]">
+              <p className="mt-2 max-w-sm text-sm leading-relaxed text-[var(--warm-white)]">
                 Save your portrait as public/sasidhar-valluru.jpg.
               </p>
             </div>

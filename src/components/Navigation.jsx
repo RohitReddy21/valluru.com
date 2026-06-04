@@ -4,40 +4,48 @@ import { useSiteContent } from '../context/useSiteContent';
 
 export default function Navigation() {
   const { siteContent } = useSiteContent();
-  const { brand, nav } = siteContent;
+  const { brand } = siteContent;
   const [isOpen, setIsOpen] = useState(false);
+  const navItems = [
+    { label: 'Home', href: '/' },
+    { label: 'About', href: '/about' },
+    { label: 'Expertise', href: '/advisory' },
+    { label: 'Investments', href: '/investments' },
+    { label: 'Insights', href: '/insights' },
+  ];
 
   const linkClass = ({ isActive }) => (
-    `nav-link rounded-md px-3 py-2 text-sm font-medium transition ${
+    `nav-link rounded-none px-1 py-2 text-sm font-semibold transition ${
       isActive
-        ? 'bg-[var(--warm-white)] text-[var(--deep-navy)]'
-        : 'text-[var(--warm-white)] hover:bg-[var(--mid-navy)] hover:text-[var(--gold)]'
+        ? 'text-[var(--gold)]'
+        : 'text-[var(--deep-navy)] hover:text-[var(--gold)]'
     }`
   );
 
   return (
-    <nav className="sticky top-0 z-50 border-b border-[var(--mid-navy)] bg-[var(--deep-navy)]/95 backdrop-blur">
+    <nav className="site-nav sticky top-0 z-50 border-b border-[var(--surface-grey)] bg-white/92 backdrop-blur-xl">
       <div className="container-custom">
-        <div className="flex min-h-16 items-center justify-between gap-4 sm:min-h-20">
-          <Link to="/" className="min-w-0 text-lg font-bold text-white sm:text-2xl" onClick={() => setIsOpen(false)}>
-            {brand.siteName}
+        <div className="flex min-h-16 items-center justify-between gap-4 sm:min-h-[5.25rem]">
+          <Link to="/" className="brand-lockup min-w-0" onClick={() => setIsOpen(false)} aria-label={brand.personName}>
+            <span className="brand-monogram">SV</span>
+            <span className="brand-name">{brand.personName}</span>
           </Link>
 
-          <div className="hidden items-center gap-1 xl:flex">
-            {nav.map((item) => (
+          <div className="hidden items-center gap-9 lg:flex">
+            {navItems.map((item) => (
               <NavLink key={item.href} to={item.href} className={linkClass}>
                 {item.label}
               </NavLink>
             ))}
           </div>
 
-          <Link to="/contact" className="btn-warm hidden xl:inline-flex">
-            Working Conversation
+          <Link to="/contact" className="nav-cta hidden lg:inline-flex">
+            Contact Me <span aria-hidden="true">-&gt;</span>
           </Link>
 
           <button
             type="button"
-            className="group inline-flex h-10 w-10 items-center justify-center rounded-md border border-[var(--mid-navy)] text-[var(--warm-white)] transition hover:border-[var(--gold)] hover:text-[var(--gold)] xl:hidden"
+            className="group inline-flex h-11 w-11 items-center justify-center rounded-lg border border-[var(--surface-grey)] bg-white text-[var(--deep-navy)] shadow-sm transition hover:border-[var(--gold)] hover:text-[var(--gold)] lg:hidden"
             aria-label="Toggle navigation"
             aria-expanded={isOpen}
             onClick={() => setIsOpen((value) => !value)}
@@ -64,8 +72,8 @@ export default function Navigation() {
         </div>
 
         {isOpen && (
-          <div className="nav-mobile-panel grid gap-2 border-t border-[var(--mid-navy)] py-4 xl:hidden">
-            {nav.map((item) => (
+          <div className="nav-mobile-panel grid gap-1 border-t border-[var(--surface-grey)] bg-white py-4 lg:hidden">
+            {navItems.map((item) => (
               <NavLink
                 key={item.href}
                 to={item.href}
@@ -75,8 +83,8 @@ export default function Navigation() {
                 {item.label}
               </NavLink>
             ))}
-            <Link to="/contact" className="btn-warm mt-2" onClick={() => setIsOpen(false)}>
-              Working Conversation
+            <Link to="/contact" className="nav-cta mt-3 w-full" onClick={() => setIsOpen(false)}>
+              Contact Me <span aria-hidden="true">-&gt;</span>
             </Link>
           </div>
         )}

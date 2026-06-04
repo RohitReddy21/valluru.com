@@ -7,15 +7,15 @@ export default function TextFlowSection({ section }) {
 
         <div className="mt-12 grid gap-12 md:grid-cols-2">
           <div>
-            <p className="text-xl leading-relaxed text-[#6B7A99]">{section.body}</p>
+            <p className="text-xl leading-relaxed text-[var(--muted-blue)]">{section.body}</p>
           </div>
 
           <div className="surface-card">
             <ul className="space-y-3">
               {section.bullets?.map((bullet) => (
                 <li key={bullet} className="flex items-start gap-3">
-                  <span className="mt-2 h-2 w-2 shrink-0 rounded-full bg-[#B08D57]"></span>
-                  <span className="text-[#2C2C2C]">{bullet}</span>
+                  <span className="mt-2 h-2 w-2 shrink-0 rounded-full bg-[var(--gold)]"></span>
+                  <span className="text-[var(--deep-navy)]">{bullet}</span>
                 </li>
               ))}
             </ul>

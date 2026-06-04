@@ -12,7 +12,7 @@ const withHeroMedia = (section) => ({
 });
 
 export const defaultSiteContent = {
-  _version: 6,
+  _version: 7,
   brand: {
     siteName: 'TheValluru.com',
     personName: 'Sasidhar Valluru',
@@ -47,7 +47,7 @@ export const defaultSiteContent = {
           primaryCta: { label: 'Start a Working Conversation', href: '/contact' },
           secondaryCta: { label: 'View Investments', href: '/investments' },
           tertiaryCta: { label: 'Read Insights', href: '/insights' },
-          media: { type: 'image', url: '/sasidhar-valluru.png', alt: 'Sasidhar Valluru professional portrait' },
+          media: { type: 'image', url: '/sasidhar-valluru-executive.png', alt: 'Sasidhar Valluru professional portrait' },
         }),
         {
           id: 'home-thesis',
@@ -93,7 +93,7 @@ export const defaultSiteContent = {
           cards: [
             { title: 'TechJignayasa', body: 'AI adoption - Platform engineering - India execution. Platform and execution partnership for moving AI intent into working systems.', iconUrl: '', logoUrl: 'https://techjignyasa.com/assets/logo_white@2x-2-DnnDihkT.png', mediaUrl: '' },
             { title: 'PrimeVerse', body: 'Active venture and investment platform. Final public positioning should be confirmed based on current scope and market.', iconUrl: '', logoUrl: 'https://primeverse.in/assets/logo-ihOaMegF.jpeg', mediaUrl: '' },
-            { title: 'VipasEnergy', body: 'Energy and utility management platform for enterprise utility workflows, analytics, rate and tariff optimization, reporting, and expense management.', iconUrl: '', logoUrl: 'https://vipas-demo-iota.vercel.app/assets/logo-D8r5BTr7.png', mediaUrl: '' },
+            { title: 'Vipas Energy', body: 'Energy and utility management platform for enterprise utility workflows, analytics, rate and tariff optimization, reporting, and expense management.', iconUrl: '', logoUrl: 'https://vipas-demo-iota.vercel.app/assets/logo-D8r5BTr7.png', mediaUrl: '' },
             { title: 'Future Themes', body: 'Applied AI, vertical AI, security AI, energy operations, India ODC/BOT, human-in-the-loop operations, MSME AI adoption, and enterprise workflow automation.', iconUrl: '', logoUrl: '', mediaUrl: '' },
           ],
           primaryCta: { label: 'View Investment Interests', href: '/investments' },
@@ -264,7 +264,7 @@ export const defaultSiteContent = {
               iconUrl: '', logoUrl: 'https://primeverse.in/assets/logo-ihOaMegF.jpeg', mediaUrl: '',
             },
             {
-              company: 'VipasEnergy',
+              company: 'Vipas Energy',
               sector: 'Energy and utility management',
               fields: [
                 { label: 'Role', value: 'Investor' },

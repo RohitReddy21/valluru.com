@@ -3,8 +3,8 @@ export const defaultTheme = {
   midNavy: '#38434F',
   gold: '#0A66C2',
   warmWhite: '#F3F2EF',
-  surfaceGrey: '#D6CEC2',
-  mutedBlue: '#5E6B75',
+  surfaceGrey: '#D0D7DE',
+  mutedBlue: '#56687A',
   accentCopper: '#004182',
   design: {
     sectionSpacing: 'normal',
@@ -22,24 +22,6 @@ const contentKey = 'thevalluru:content';
 const themeKey = 'thevalluru:theme';
 const adminKey = 'thevalluru:admin';
 const adminPasswordKey = 'thevalluru:admin-password';
-const oldDefaultPalette = {
-  deepNavy: '#0B1120',
-  midNavy: '#1A2E52',
-  gold: '#C9A84C',
-  warmWhite: '#F5F4F0',
-  surfaceGrey: '#E8E6E0',
-  mutedBlue: '#6B7A99',
-};
-
-const warmDefaultPalette = {
-  deepNavy: '#2C2C2C',
-  midNavy: '#4A3F35',
-  gold: '#B08D57',
-  warmWhite: '#F8F4EC',
-  surfaceGrey: '#E8DDCB',
-  mutedBlue: '#4A3F35',
-  accentCopper: '#A66A3F',
-};
 
 function canUseStorage() {
   return typeof window !== 'undefined' && window.localStorage;
@@ -74,7 +56,6 @@ export function getTheme() {
   const storedTheme = normalizeTheme(readJson(themeKey, defaultTheme));
   return {
     ...defaultTheme,
-    ...storedTheme,
     design: {
       ...defaultTheme.design,
       ...(storedTheme?.design || {}),
@@ -84,12 +65,6 @@ export function getTheme() {
 
 export function normalizeTheme(theme) {
   if (!theme) return defaultTheme;
-
-  const paletteMatches = (palette) => Object.entries(palette).every(([key, value]) => (
-    !theme[key] || String(theme[key]).toLowerCase() === value.toLowerCase()
-  ));
-
-  if (!paletteMatches(oldDefaultPalette) && !paletteMatches(warmDefaultPalette)) return theme;
 
   return {
     ...defaultTheme,

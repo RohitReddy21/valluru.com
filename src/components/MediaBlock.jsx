@@ -17,6 +17,7 @@ export function SectionBackground({ section }) {
           muted
           loop
           playsInline
+          preload="metadata"
           poster={backgroundImage}
           aria-hidden="true"
         >
@@ -27,6 +28,8 @@ export function SectionBackground({ section }) {
           src={backgroundImage}
           alt=""
           className="absolute inset-0 h-full w-full object-cover opacity-[var(--hero-media-opacity)]"
+          decoding="async"
+          fetchPriority="high"
           aria-hidden="true"
         />
       )}
@@ -35,7 +38,7 @@ export function SectionBackground({ section }) {
   );
 }
 
-export function InlineMedia({ item, className = '' }) {
+export function InlineMedia({ item, className = '', loading = 'lazy', fetchPriority = 'auto' }) {
   if (!item?.url && !item?.icon) return null;
 
   if (item.icon && !item.url) {
@@ -48,7 +51,7 @@ export function InlineMedia({ item, className = '' }) {
 
   if (item.type === 'video' || isVideo(item.url)) {
     return (
-      <video className={`media-frame ${className}`} controls playsInline poster={item.poster || ''}>
+      <video className={`media-frame ${className}`} controls playsInline preload="metadata" poster={item.poster || ''}>
         <source src={item.url} type="video/mp4" />
       </video>
     );
@@ -59,7 +62,9 @@ export function InlineMedia({ item, className = '' }) {
       src={item.url}
       alt={item.alt || item.title || ''}
       className={`media-frame ${className}`}
-      loading="lazy"
+      loading={loading}
+      decoding="async"
+      fetchPriority={fetchPriority}
     />
   );
 }
