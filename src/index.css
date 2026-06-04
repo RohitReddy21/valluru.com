@@ -931,9 +931,9 @@
     }
 
     .hero-visual {
-      @apply w-full;
-      margin-top: 1.5rem;
-      margin-bottom: 1rem;
+      @apply w-full flex justify-center;
+      margin-top: 2rem;
+      margin-bottom: 1.5rem;
     }
 
     .hero-badge {
@@ -968,21 +968,20 @@
     }
 
     .executive-frame {
-      width: 100%;
+      width: min(85vw, 28rem);
       height: auto;
       min-height: 0;
       max-height: none;
-      aspect-ratio: auto;
-      @apply rounded-2xl;
+      aspect-ratio: 3 / 4;
+      @apply rounded-3xl mx-auto;
     }
 
     .executive-portrait {
-      height: auto;
+      height: 100%;
       width: 100%;
-      max-width: 100%;
-      object-fit: contain;
+      object-fit: cover;
       object-position: center;
-      @apply rounded-2xl;
+      @apply rounded-3xl;
     }
 
     .section-ambient {
