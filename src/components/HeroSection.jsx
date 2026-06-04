@@ -61,7 +61,7 @@ export default function HeroSection({ section }) {
 
         <div className="flex justify-center lg:justify-end">
           {showImage ? (
-            <div className="w-[min(78vw,28rem)] aspect-square overflow-hidden rounded-full lg:w-[30rem]">
+            <div className="w-[min(78vw,28rem)] h-[min(78vw,28rem)] overflow-hidden rounded-full lg:w-[30rem] lg:h-[30rem]">
               <img
                 src={section.media.url}
                 alt={section.media.alt || section.title}
@@ -70,7 +70,7 @@ export default function HeroSection({ section }) {
               />
             </div>
           ) : (
-            <div className="flex w-[min(78vw,28rem)] aspect-square flex-col items-center justify-center rounded-full border border-[var(--gold)]/30 bg-[var(--deep-navy)]/40 p-8 text-center lg:w-[30rem]">
+            <div className="flex w-[min(78vw,28rem)] h-[min(78vw,28rem)] flex-col items-center justify-center rounded-full border border-[var(--gold)]/30 bg-[var(--deep-navy)]/40 p-8 text-center lg:w-[30rem] lg:h-[30rem]">
               <div className="mb-5 h-24 w-24 rounded-lg bg-[var(--deep-navy)]/60"></div>
               <p className="text-lg font-bold text-white">Your image goes here</p>
               <p className="mt-2 max-w-sm text-sm leading-relaxed text-[var(--warm-white)]">
