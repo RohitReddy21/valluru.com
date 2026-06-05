@@ -660,8 +660,8 @@
     width: min(84vw, 38rem);
     height: min(76svh, 47rem);
     min-height: 36rem;
-    filter: drop-shadow(0 28px 45px rgb(15 23 42 / 0.16));
-    @apply flex items-end justify-center overflow-hidden rounded-[2.5rem];
+    filter: drop-shadow(0 28px 45px rgb(15 23 42 / 0.14));
+    @apply flex items-end justify-center;
   }
 
   .executive-frame::before {
@@ -679,7 +679,7 @@
     height: 100%;
     object-fit: contain;
     object-position: center bottom;
-    border-radius: 1.5rem;
+    mix-blend-mode: multiply;
     @apply block;
   }
 
