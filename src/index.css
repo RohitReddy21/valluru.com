@@ -652,42 +652,46 @@
 
   .hero-visual {
     animation: hero-media-in 1000ms ease 120ms both;
-    @apply relative flex flex-col items-center lg:items-start;
+    @apply relative flex flex-col items-center lg:items-center;
   }
 
   .executive-frame {
     position: relative;
-    width: min(84vw, 38rem);
-    height: min(76svh, 47rem);
-    min-height: 36rem;
-    filter: drop-shadow(0 28px 45px rgb(15 23 42 / 0.14));
-    @apply flex items-end justify-center;
+    width: clamp(20rem, 34vw, 32rem);
+    height: auto;
+    min-height: 0;
+    aspect-ratio: 1;
+    @apply flex items-center justify-center;
   }
 
   .executive-frame::before {
     content: '';
     position: absolute;
-    inset: 7% 0 4% 10%;
+    inset: 0.5rem;
     z-index: -1;
-    border-radius: 42% 58% 18% 36% / 22% 34% 66% 78%;
-    background: rgba(37, 99, 235, 0.18);
-    box-shadow: 0 0 90px rgb(37 99 235 / 0.22);
+    border-radius: 9999px;
+    background: rgba(37, 99, 235, 0.12);
+    box-shadow: 0 0 70px rgb(37 99 235 / 0.18);
   }
 
   .executive-portrait {
     width: 100%;
     height: 100%;
+    aspect-ratio: 1;
+    border: 4px solid #ffffff;
+    border-radius: 9999px;
+    background: #ffffff;
     object-fit: contain;
-    object-position: center bottom;
-    mix-blend-mode: multiply;
+    object-position: 42% center;
+    box-shadow: 0 22px 52px rgb(15 23 42 / 0.22);
     @apply block;
   }
 
   .expertise-stack {
     position: absolute;
-    right: 0;
+    right: clamp(-1.25rem, -2vw, -0.25rem);
     top: 18%;
-    @apply hidden w-52 flex-col gap-4 lg:flex;
+    @apply hidden w-48 flex-col gap-4 lg:flex xl:w-52;
   }
 
   .expertise-card {
@@ -864,19 +868,18 @@
     }
 
     .executive-frame {
-      width: min(72vw, 31rem);
-      height: clamp(28rem, 76vw, 42rem);
-      min-height: 28rem;
-      max-height: 42rem;
-      @apply rounded-[2rem];
+      width: min(68vw, 28rem);
+      height: auto;
+      min-height: 0;
+      max-height: none;
+      aspect-ratio: 1;
     }
 
     .executive-portrait {
       height: 100%;
       width: 100%;
       object-fit: contain;
-      object-position: center bottom;
-      @apply rounded-[2rem];
+      object-position: 42% center;
     }
   }
 
@@ -991,20 +994,19 @@
     }
 
     .executive-frame {
-      width: min(74vw, 21rem);
+      width: min(86vw, 22rem);
       height: auto;
       min-height: 0;
       max-height: none;
-      aspect-ratio: 4 / 5;
-      @apply rounded-3xl mx-auto;
+      aspect-ratio: 1;
+      @apply mx-auto;
     }
 
     .executive-portrait {
       height: 100%;
       width: 100%;
-      object-fit: cover;
-      object-position: center;
-      @apply rounded-3xl;
+      object-fit: contain;
+      object-position: 42% center;
     }
 
     .section-ambient {

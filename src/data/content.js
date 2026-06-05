@@ -47,7 +47,7 @@ export const defaultSiteContent = {
           primaryCta: { label: 'Start a Working Conversation', href: '/contact' },
           secondaryCta: { label: 'View Investments', href: '/investments' },
           tertiaryCta: { label: 'Read Insights', href: '/insights' },
-          media: { type: 'image', url: '/sasidhar-valluru-nobg.png', alt: 'Sasidhar Valluru professional portrait' },
+          media: { type: 'image', url: '/pic1.jpeg', alt: 'Sasidhar Valluru professional portrait' },
         }),
         {
           id: 'home-thesis',

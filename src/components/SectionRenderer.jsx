@@ -194,7 +194,7 @@ function HeroVisual({ section, className = '' }) {
   return (
     <div className={`hero-visual ${className}`}>
       <div className="executive-frame">
-        <img src={section.media.url} alt={section.media.alt || section.title || ''} className="executive-portrait mx-auto rounded-2xl" loading="eager" decoding="async" fetchPriority="high" />
+        <img src={section.media.url} alt={section.media.alt || section.title || ''} className="executive-portrait mx-auto" loading="eager" decoding="async" fetchPriority="high" />
         <div className="expertise-stack" aria-label="Professional expertise">
           {heroExpertiseCards.map((item, idx) => (
             <div className="expertise-card" key={item.title} style={{ '--float-index': idx }}>
