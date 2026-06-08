@@ -1,12 +1,13 @@
 import fallbackHeroVideo from '../assets/199827-911378618_medium.mp4';
+import { normalizeMediaUrl } from '../utils/mediaUrl';
 
 function isVideo(url = '') {
   return /\.(mp4|webm|ogg)$/i.test(url);
 }
 
 export function SectionBackground({ section }) {
-  const backgroundVideo = section.backgroundVideo || fallbackHeroVideo;
-  const backgroundImage = section.backgroundImage || '/hero-tech-bg.png';
+  const backgroundVideo = normalizeMediaUrl(section.backgroundVideo) || fallbackHeroVideo;
+  const backgroundImage = normalizeMediaUrl(section.backgroundImage) || '/hero-tech-bg.png';
 
   return (
     <>
@@ -49,17 +50,19 @@ export function InlineMedia({ item, className = '', loading = 'lazy', fetchPrior
     );
   }
 
-  if (item.type === 'video' || isVideo(item.url)) {
+  const url = normalizeMediaUrl(item.url);
+
+  if (item.type === 'video' || isVideo(url)) {
     return (
       <video className={`media-frame ${className}`} controls playsInline preload="metadata" poster={item.poster || ''}>
-        <source src={item.url} type="video/mp4" />
+        <source src={url} type="video/mp4" />
       </video>
     );
   }
 
   return (
     <img
-      src={item.url}
+      src={url}
       alt={item.alt || item.title || ''}
       className={`media-frame ${className}`}
       loading={loading}

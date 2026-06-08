@@ -2,6 +2,8 @@ import { Link } from 'react-router-dom';
 import { useEffect, useRef, useState } from 'react';
 import AdminEditButton from './AdminEditButton';
 import { InlineMedia, MediaGallery, SectionBackground } from './MediaBlock';
+import { normalizeMediaUrl } from '../utils/mediaUrl';
+import fallbackPortrait from '../assets/Screenshot 2026-06-03 203254-photoaidcom-cropped.png';
 
 function getScrollMotion(section) {
   if (section.type === 'hero' || section.type === 'page-hero') return 'hero';
@@ -101,9 +103,10 @@ function formatDetailLabel(label) {
 }
 
 function CardMedia({ card }) {
-  const logoUrl = card.logoUrl;
-  const iconUrl = card.iconUrl;
-  const media = card.media || (card.mediaUrl ? { url: card.mediaUrl, type: card.mediaType, alt: card.title } : null);
+  const logoUrl = normalizeMediaUrl(card.logoUrl);
+  const iconUrl = normalizeMediaUrl(card.iconUrl);
+  const mediaUrl = normalizeMediaUrl(card.mediaUrl);
+  const media = card.media || (mediaUrl ? { url: mediaUrl, type: card.mediaType, alt: card.title } : null);
 
   if (logoUrl) {
     return (
@@ -177,24 +180,24 @@ const heroExpertiseCards = [
 ];
 
 function HeroVisual({ section, className = '' }) {
-  if (!section.media?.url) {
-    return (
-      <div className={`hero-visual ${className}`}> 
-        <div className="flex w-[min(78vw,28rem)] flex-col items-center justify-center rounded-lg border border-[var(--gold)]/30 bg-[var(--deep-navy)]/40 p-8 text-center lg:w-[30rem]">
-          <div className="media-icon mb-5">SV</div>
-          <p className="text-lg font-bold text-white">Add your image in admin</p>
-          <p className="mt-2 max-w-sm text-sm leading-relaxed text-[var(--warm-white)]">
-            Edit this section and set media.url to a file in public.
-          </p>
-        </div>
-      </div>
-    );
-  }
+  const [imageFailed, setImageFailed] = useState(false);
+  const imageUrl = normalizeMediaUrl(section.media?.url);
+  const imageSrc = imageFailed || !imageUrl ? fallbackPortrait : imageUrl;
 
   return (
     <div className={`hero-visual ${className}`}>
       <div className="executive-frame">
-        <img src={section.media.url} alt={section.media.alt || section.title || ''} className="executive-portrait mx-auto" loading="eager" decoding="async" fetchPriority="high" />
+        <img
+          src={imageSrc}
+          alt={section.media.alt || section.title || ''}
+          className="executive-portrait mx-auto"
+          loading="eager"
+          decoding="async"
+          fetchPriority="high"
+          onError={() => {
+            if (imageSrc !== fallbackPortrait) setImageFailed(true);
+          }}
+        />
         <div className="expertise-stack" aria-label="Professional expertise">
           {heroExpertiseCards.map((item, idx) => (
             <div className="expertise-card" key={item.title} style={{ '--float-index': idx }}>
@@ -228,10 +231,10 @@ function Hero({ section, pageKey }) {
           loop
           playsInline
           preload="metadata"
-          poster={section.backgroundImage || '/hero-tech-bg.png'}
+          poster={normalizeMediaUrl(section.backgroundImage) || '/hero-tech-bg.png'}
           aria-hidden="true"
         >
-          <source src={section.backgroundVideo} type="video/mp4" />
+          <source src={normalizeMediaUrl(section.backgroundVideo)} type="video/mp4" />
         </video>
       )}
       <div className="hero-skyline" aria-hidden="true"></div>
