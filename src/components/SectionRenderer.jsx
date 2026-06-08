@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from 'react';
 import AdminEditButton from './AdminEditButton';
 import { InlineMedia, MediaGallery, SectionBackground } from './MediaBlock';
 import { normalizeMediaUrl } from '../utils/mediaUrl';
-import fallbackPortrait from '../assets/Screenshot 2026-06-03 203254-photoaidcom-cropped.png';
+import fallbackPortrait from '../assets/sasidhar-valluru.jpg';
 
 function getScrollMotion(section) {
   if (section.type === 'hero' || section.type === 'page-hero') return 'hero';
