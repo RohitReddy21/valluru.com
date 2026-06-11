@@ -529,8 +529,14 @@ function NumberField({ label, value, onChange }) {
   );
 }
 
-function isUploadableImageField(label) {
-  return uploadableImageFields.has(String(label || '').toLowerCase());
+function isUploadableImageField(label, path = []) {
+  const normalizedLabel = String(label || '').toLowerCase();
+  const normalizedPath = path.map((part) => String(part || '').toLowerCase());
+
+  return (
+    uploadableImageFields.has(normalizedLabel) ||
+    (normalizedLabel === 'url' && normalizedPath.includes('media'))
+  );
 }
 
 function MediaUploadField({ label, value, onChange }) {
@@ -606,7 +612,7 @@ function MediaUploadField({ label, value, onChange }) {
   );
 }
 
-function FieldEditor({ label, value, onChange, depth = 0 }) {
+function FieldEditor({ label, value, onChange, depth = 0, path = [] }) {
   if (typeof value === 'boolean') {
     return <BooleanField label={label} value={value} onChange={onChange} />;
   }
@@ -701,6 +707,7 @@ function FieldEditor({ label, value, onChange, depth = 0 }) {
                 label={primitiveItems ? label : `item-${index + 1}`}
                 value={item}
                 depth={depth + 1}
+                path={[...path, label, index]}
                 onChange={(nextItem) => {
                   const next = [...value];
                   next[index] = nextItem;
@@ -725,6 +732,7 @@ function FieldEditor({ label, value, onChange, depth = 0 }) {
                 label={key}
                 value={childValue}
                 depth={depth + 1}
+                path={[...path, label]}
                 onChange={(nextChildValue) => onChange({ ...value, [key]: nextChildValue })}
               />
             </div>
@@ -734,7 +742,7 @@ function FieldEditor({ label, value, onChange, depth = 0 }) {
     );
   }
 
-  if (isUploadableImageField(label)) {
+  if (isUploadableImageField(label, path)) {
     return <MediaUploadField label={label} value={value} onChange={onChange} />;
   }
 
@@ -768,6 +776,16 @@ function DesignSettings({ design, onChange }) {
   );
 }
 
+function updateHeroImage(section, value) {
+  return {
+    media: {
+      ...(section.media || {}),
+      type: 'image',
+      url: value,
+    },
+  };
+}
+
 function HeroBackgrounds({ pages, onUpdateSection }) {
   const heroSections = Object.entries(pages).flatMap(([pageKey, page]) => (
     (page.sections || [])
@@ -777,17 +795,24 @@ function HeroBackgrounds({ pages, onUpdateSection }) {
 
   return (
     <div className="rounded-xl border border-[var(--surface-grey)] bg-white p-6 shadow-lg shadow-slate-900/10">
-      <h2 className="text-2xl font-bold text-[var(--deep-navy)]">Hero Backgrounds</h2>
+      <h2 className="text-2xl font-bold text-[var(--deep-navy)]">Hero Media</h2>
       <p className="mt-2 text-sm text-[var(--muted-blue)]">
-        Set the hero background image or video for every page from one place. Put files in public and reference them like /hero-tech-bg.png or /hero-background.mp4.
+        Set hero background media for every page from one place. For the home hero portrait, paste an image URL or upload from your device.
       </p>
       <div className="mt-5 grid gap-4">
         {heroSections.map(({ pageKey, pageTitle, section }) => (
-          <div key={`${pageKey}-${section.id}`} className="grid gap-4 rounded-xl border border-[var(--surface-grey)] bg-[var(--warm-white)] p-4 lg:grid-cols-[12rem_1fr_1fr]">
+          <div key={`${pageKey}-${section.id}`} className="grid gap-4 rounded-xl border border-[var(--surface-grey)] bg-[var(--warm-white)] p-4 lg:grid-cols-[12rem_1fr_1fr] xl:grid-cols-[12rem_1fr_1fr_1fr]">
             <div>
               <p className="text-sm font-bold text-[var(--deep-navy)]">{pageTitle}</p>
               <p className="mt-1 text-xs font-semibold uppercase tracking-[0.14em] text-[var(--muted-blue)]">{section.eyebrow || section.id}</p>
             </div>
+            {section.type === 'hero' && (
+              <MediaUploadField
+                label="heroImage"
+                value={section.media?.url || ''}
+                onChange={(value) => onUpdateSection(pageKey, section.id, updateHeroImage(section, value))}
+              />
+            )}
             <label className="grid gap-2">
               <span className="text-sm font-bold text-[var(--deep-navy)]">Background video path</span>
               <input
@@ -1209,9 +1234,9 @@ export default function Admin() {
 
                 {heroSections.length > 0 && (
                   <div className="rounded-xl border border-[var(--surface-grey)] bg-white p-5 shadow-sm shadow-slate-900/10">
-                    <h3 className="text-lg font-bold text-[var(--deep-navy)]">Hero background for {content.pages[activePage]?.title}</h3>
+                    <h3 className="text-lg font-bold text-[var(--deep-navy)]">Hero media for {content.pages[activePage]?.title}</h3>
                     <p className="mt-2 text-sm text-[var(--muted-blue)]">
-                      Put background files in public, then reference them as /hero-video.mp4 or /hero-image.png.
+                      Paste hosted media URLs, reference files from public, or upload the home hero portrait from your device.
                     </p>
                     <div className="mt-5 grid gap-5">
                       {heroSections.map((section) => (
@@ -1219,6 +1244,13 @@ export default function Admin() {
                           <div className="md:col-span-2">
                             <p className="text-sm font-bold text-[var(--deep-navy)]">{section.eyebrow || section.title}</p>
                           </div>
+                          {section.type === 'hero' && (
+                            <MediaUploadField
+                              label="heroImage"
+                              value={section.media?.url || ''}
+                              onChange={(value) => updateSection(activePage, section.id, updateHeroImage(section, value))}
+                            />
+                          )}
                           <label className="grid gap-2">
                             <span className="text-sm font-bold text-[var(--deep-navy)]">Background video path</span>
                             <input

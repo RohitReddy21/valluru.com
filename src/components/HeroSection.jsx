@@ -62,7 +62,7 @@ export default function HeroSection({ section }) {
           {showImage ? (
             <div className="w-[min(80vw,20rem)] h-[min(80vw,20rem)] sm:w-[min(90vw,28rem)] sm:h-[min(90vw,28rem)] lg:w-[30rem] lg:h-[30rem] overflow-hidden rounded-full">
               <img
-                src="./src/assets/sasidhar-valluru.jpg"
+                src="./src/assets/Movement 3.png"
                 alt={section.media.alt || section.title}
                 onError={() => setImageFailed(true)}
                 className="h-full w-full object-cover rounded-full"

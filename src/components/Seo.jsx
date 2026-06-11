@@ -1,69 +1,80 @@
-import { useEffect } from 'react';
+import { Helmet } from 'react-helmet-async';
 import { useLocation } from 'react-router-dom';
 import { useSiteContent } from '../context/useSiteContent';
-
-const siteUrl = 'https://valluru-com.vercel.app';
-
-function setMeta(name, content, attribute = 'name') {
-  if (!content) return;
-
-  let element = document.head.querySelector(`meta[${attribute}="${name}"]`);
-  if (!element) {
-    element = document.createElement('meta');
-    element.setAttribute(attribute, name);
-    document.head.appendChild(element);
-  }
-  element.setAttribute('content', content);
-}
-
-function setLink(rel, href) {
-  let element = document.head.querySelector(`link[rel="${rel}"]`);
-  if (!element) {
-    element = document.createElement('link');
-    element.setAttribute('rel', rel);
-    document.head.appendChild(element);
-  }
-  element.setAttribute('href', href);
-}
+import {
+  SITE_URL,
+  SITE_NAME,
+  DEFAULT_IMAGE,
+  TWITTER_HANDLE,
+  GSC_VERIFICATION,
+  seoConfig,
+} from '../data/seoConfig';
 
 function getPageKey(pathname) {
   if (pathname === '/') return 'home';
-  return pathname.replace('/', '') || 'home';
+  const key = pathname.replace(/^\//, '').split('/')[0];
+  return key || 'home';
 }
 
 export default function Seo() {
   const location = useLocation();
   const { siteContent } = useSiteContent();
 
-  useEffect(() => {
-    const pageKey = getPageKey(location.pathname);
-    const page = siteContent.pages?.[pageKey] || siteContent.pages?.home;
-    const hero = page?.sections?.[0] || {};
-    const brandName = siteContent.brand?.siteName || 'TheValluru.com';
-    const personName = siteContent.brand?.personName || 'Sasidhar Valluru';
-    const title = pageKey === 'admin'
-      ? `Admin | ${brandName}`
-      : pageKey === 'home'
-      ? `${brandName} | ${siteContent.brand?.tagline || 'Investor. Operator. AI Architect.'}`
-      : `${page?.title || pageKey} | ${brandName}`;
-    const description = hero.body || siteContent.brand?.positioning || `${personName} professional home.`;
-    const canonical = `${siteUrl}${location.pathname}`;
-    const image = `${siteUrl}/hero-tech-bg.png`;
+  const pageKey = getPageKey(location.pathname);
+  const config = seoConfig[pageKey] || seoConfig.home;
+  const canonical = `${SITE_URL}${location.pathname === '/' ? '' : location.pathname}`;
+  const ogImage = DEFAULT_IMAGE;
 
-    document.title = title;
-    setMeta('description', description);
-    setMeta('robots', pageKey === 'admin' ? 'noindex,nofollow' : 'index,follow');
-    setMeta('og:type', 'website', 'property');
-    setMeta('og:title', title, 'property');
-    setMeta('og:description', description, 'property');
-    setMeta('og:url', canonical, 'property');
-    setMeta('og:image', image, 'property');
-    setMeta('twitter:card', 'summary_large_image');
-    setMeta('twitter:title', title);
-    setMeta('twitter:description', description);
-    setMeta('twitter:image', image);
-    setLink('canonical', canonical);
-  }, [location.pathname, siteContent]);
+  // Derive title & description from CMS content as override where available
+  const page = siteContent.pages?.[pageKey];
+  const hero = page?.sections?.[0] || {};
+  const brandName = siteContent.brand?.siteName || SITE_NAME;
 
-  return null;
+  const title = config.title;
+  const description =
+    config.description ||
+    hero.body ||
+    siteContent.brand?.positioning ||
+    `${brandName} — professional home of Sasidhar Valluru.`;
+
+  const isNoIndex = config.noIndex || false;
+
+  return (
+    <Helmet prioritizeSeoTags>
+      {/* ── Primary ──────────────────────────────────────────── */}
+      <html lang="en" />
+      <title>{title}</title>
+      <meta name="description" content={description} />
+      {config.keywords && <meta name="keywords" content={config.keywords} />}
+      <meta name="author" content="Sasidhar Valluru" />
+      <meta name="robots" content={isNoIndex ? 'noindex,nofollow' : 'index,follow,max-snippet:-1,max-image-preview:large,max-video-preview:-1'} />
+      <link rel="canonical" href={canonical} />
+
+      {/* ── Google Search Console verification ──────────────── */}
+      {GSC_VERIFICATION && GSC_VERIFICATION !== 'YOUR_SEARCH_CONSOLE_VERIFICATION_CODE' && (
+        <meta name="google-site-verification" content={GSC_VERIFICATION} />
+      )}
+
+      {/* ── Open Graph ───────────────────────────────────────── */}
+      <meta property="og:site_name" content={brandName} />
+      <meta property="og:type" content={config.ogType || 'website'} />
+      <meta property="og:title" content={title} />
+      <meta property="og:description" content={description} />
+      <meta property="og:url" content={canonical} />
+      <meta property="og:image" content={ogImage} />
+      <meta property="og:image:width" content="1200" />
+      <meta property="og:image:height" content="630" />
+      <meta property="og:image:alt" content="Sasidhar Valluru — Investor, Operator, AI Architect" />
+      <meta property="og:locale" content="en_US" />
+
+      {/* ── Twitter / X Cards ────────────────────────────────── */}
+      <meta name="twitter:card" content="summary_large_image" />
+      <meta name="twitter:site" content={TWITTER_HANDLE} />
+      <meta name="twitter:creator" content={TWITTER_HANDLE} />
+      <meta name="twitter:title" content={title} />
+      <meta name="twitter:description" content={description} />
+      <meta name="twitter:image" content={ogImage} />
+      <meta name="twitter:image:alt" content="Sasidhar Valluru — Investor, Operator, AI Architect" />
+    </Helmet>
+  );
 }
