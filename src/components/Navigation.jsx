@@ -25,10 +25,10 @@ export default function Navigation() {
   return (
     <nav className="site-nav sticky top-0 z-50 border-b border-[var(--surface-grey)] bg-white/92 backdrop-blur-xl">
       <div className="container-custom">
-        <div className="flex min-h-16 items-center justify-between gap-4 sm:min-h-[5.25rem]">
-          <Link to="/" className="brand-lockup min-w-0" onClick={() => setIsOpen(false)} aria-label={brand.personName}>
-            <span className="brand-monogram">SV</span>
-            <span className="brand-name">{brand.personName}</span>
+        <div className="flex min-h-16 items-center justify-between gap-6 sm:min-h-[5.25rem]">
+          <Link to="/" className="brand-lockup min-w-10" onClick={() => setIsOpen(false)} aria-label={brand.personName}>
+            <span className="brand-monogram w-15">SV</span>
+            <span className="brand-name font-extrabold">{brand.personName}</span>
           </Link>
 
           <div className="hidden items-center gap-9 lg:flex">

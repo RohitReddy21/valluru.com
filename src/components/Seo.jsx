@@ -6,6 +6,7 @@ import {
   SITE_NAME,
   DEFAULT_IMAGE,
   TWITTER_HANDLE,
+  GA4_ID,
   GSC_VERIFICATION,
   seoConfig,
 } from '../data/seoConfig';
@@ -38,6 +39,7 @@ export default function Seo() {
     `${brandName} — professional home of Sasidhar Valluru.`;
 
   const isNoIndex = config.noIndex || false;
+  const hasGa4 = GA4_ID && GA4_ID !== 'G-XXXXXXXXXX';
 
   return (
     <Helmet prioritizeSeoTags>
@@ -53,6 +55,18 @@ export default function Seo() {
       {/* ── Google Search Console verification ──────────────── */}
       {GSC_VERIFICATION && GSC_VERIFICATION !== 'YOUR_SEARCH_CONSOLE_VERIFICATION_CODE' && (
         <meta name="google-site-verification" content={GSC_VERIFICATION} />
+      )}
+
+      {hasGa4 && <script async src={`https://www.googletagmanager.com/gtag/js?id=${GA4_ID}`} />}
+      {hasGa4 && (
+        <script>
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', '${GA4_ID}');
+          `}
+        </script>
       )}
 
       {/* ── Open Graph ───────────────────────────────────────── */}

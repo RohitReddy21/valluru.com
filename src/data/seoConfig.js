@@ -11,8 +11,8 @@ export const TWITTER_HANDLE = '@sasivalluru';
 export const LINKEDIN_URL = 'https://www.linkedin.com/in/sasivalluru/';
 export const LOGO_URL = `${SITE_URL}/favicon.svg`;
 
-// GA4 Measurement ID — replace with your real ID from Google Analytics
-export const GA4_ID = 'G-XXXXXXXXXX';
+// GA4 Measurement ID for TheValluru.com
+export const GA4_ID = 'G-8TBRZSRX6G';
 
 // Google Search Console verification code — replace with your real code
 export const GSC_VERIFICATION = 'YOUR_SEARCH_CONSOLE_VERIFICATION_CODE';
