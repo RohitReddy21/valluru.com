@@ -689,9 +689,9 @@
 
   .expertise-stack {
     position: absolute;
-    right: clamp(-1.25rem, -2vw, -0.25rem);
+    right: clamp(-7.5rem, -8vw, 3.5rem);
     top: 18%;
-    @apply hidden w-48 flex-col gap-4 lg:flex xl:w-52;
+    @apply hidden w-52 flex-col gap-4 lg:flex xl:w-56;
   }
 
   .expertise-card {
