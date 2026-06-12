@@ -150,9 +150,9 @@ function CardHeader({ card, fallbackNumber }) {
   }
 
   return (
-    <div className="mb-4 flex items-center gap-4">
+    <div className="mb-4 flex flex-col items-center gap-4">
       {hasVisual ? <CardMedia card={card} /> : <div className="number-badge shrink-0">{fallbackNumber}</div>}
-      {hasText(title) && <h3 className="min-w-0 text-lg font-bold text-[var(--deep-navy)]">{title}</h3>}
+      {hasText(title) && <h3 className="text-lg font-bold text-[var(--deep-navy)]">{title}</h3>}
     </div>
   );
 }
@@ -439,7 +439,7 @@ function DetailCards({ section, pageKey }) {
                 <CardHeader card={item} fallbackNumber={idx + 1} />
                 {hasText(item.sector) && <p className="mb-5 text-sm font-semibold leading-relaxed text-[var(--muted-blue)]">{item.sector}</p>}
                 {rows.length > 0 && (
-                  <div className="space-y-4 text-sm leading-relaxed">
+                  <div className="space-y-5 text-sm leading-relaxed">
                     {rows.map((row, rowIndex) => (
                       <p key={`${row.label}-${rowIndex}`}>
                         {hasText(row.label) && <span className="font-bold text-[var(--deep-navy)]">{formatDetailLabel(row.label)}: </span>}
