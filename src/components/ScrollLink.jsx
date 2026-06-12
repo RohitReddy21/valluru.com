@@ -1,7 +1,29 @@
-import { useLocation } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useEffect } from 'react';
 
+// Helper function to scroll to element by hash
+export function scrollToHash(hash) {
+  if (!hash) return;
+
+  const scrollToElement = () => {
+    const target = document.getElementById(hash);
+    if (target) {
+      target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    } else {
+      console.warn(`Element with id "${hash}" not found`);
+    }
+  };
+
+  // Ensure DOM is ready
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', scrollToElement);
+  } else {
+    setTimeout(scrollToElement, 100);
+  }
+}
+
 function ScrollLink({ href, to, children, ...props }) {
+  const navigate = useNavigate();
   const location = useLocation();
   const hrefValue = href || to;
 
@@ -13,21 +35,22 @@ function ScrollLink({ href, to, children, ...props }) {
     // Extract the hash from the href
     const hashIndex = hrefValue.indexOf('#');
     if (hashIndex === -1) {
-      window.location.href = hrefValue;
+      // No hash, just navigate
+      navigate(hrefValue);
       return;
     }
 
     const hash = hrefValue.substring(hashIndex + 1);
     const path = hrefValue.substring(0, hashIndex) || location.pathname;
 
-    // If we need to navigate to a different page, use window.location to preserve hash
-    if (path !== location.pathname) {
-      window.location.href = hrefValue;
-      return;
+    // If navigating to a different page
+    if (path && path !== location.pathname) {
+      // Navigate and let the hook handle scrolling
+      navigate({ pathname: path, hash: `#${hash}` });
+    } else {
+      // Same page: just scroll
+      scrollToHash(hash);
     }
-
-    // Same page: just scroll
-    scrollToHash(hash);
   };
 
   return (
@@ -37,27 +60,16 @@ function ScrollLink({ href, to, children, ...props }) {
   );
 }
 
-// Helper function to scroll to element by hash
-function scrollToHash(hash) {
-  const scrollToElement = () => {
-    const target = document.getElementById(hash);
-    if (target) {
-      target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }
-  };
-
-  // Ensure DOM is ready
-  setTimeout(scrollToElement, 200);
-}
-
-// Global hook to handle hash navigation on page load
+// Global hook to handle hash navigation on page load and location changes
 export function useScrollToHash() {
+  const location = useLocation();
+
   useEffect(() => {
-    const hash = window.location.hash.substring(1);
-    if (hash) {
+    if (location.hash) {
+      const hash = location.hash.substring(1);
       scrollToHash(hash);
     }
-  }, []);
+  }, [location]);
 }
 
 export default ScrollLink;

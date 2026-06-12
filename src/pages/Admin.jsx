@@ -541,9 +541,10 @@ function isUploadableImageField(label, path = []) {
 
 function MediaUploadField({ label, value, onChange }) {
   const [uploadError, setUploadError] = useState('');
+  const [isUploading, setIsUploading] = useState(false);
   const text = value ?? '';
 
-  function handleUpload(event) {
+  async function handleUpload(event) {
     const file = event.target.files?.[0];
     event.target.value = '';
     if (!file) return;
@@ -558,10 +559,73 @@ function MediaUploadField({ label, value, onChange }) {
       return;
     }
 
+    setIsUploading(true);
+    setUploadError('');
+
+    try {
+      // Try cloud upload first
+      const { uploadImage } = await import('../utils/supabaseClient');
+      const result = await uploadImage(file, 'admin-uploads');
+
+      if (result.url) {
+        onChange(result.url);
+        const sizeMB = (result.size / 1024 / 1024).toFixed(2);
+        setUploadError(`✓ Uploaded successfully (${sizeMB}MB)`);
+      } else {
+        // Fallback to base64 if cloud upload not available
+        fallbackBase64Upload(file);
+      }
+    } catch (error) {
+      console.warn('Cloud upload failed, using base64:', error);
+      fallbackBase64Upload(file);
+    } finally {
+      setIsUploading(false);
+    }
+  }
+
+  function fallbackBase64Upload(file) {
     const reader = new FileReader();
-    reader.onload = () => {
-      setUploadError('');
-      onChange(String(reader.result || ''));
+    reader.onload = (event) => {
+      const img = new Image();
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+
+        let width = img.width;
+        let height = img.height;
+        const maxWidth = 1200;
+
+        if (width > maxWidth) {
+          height = Math.round((height * maxWidth) / width);
+          width = maxWidth;
+        }
+
+        canvas.width = width;
+        canvas.height = height;
+        ctx.drawImage(img, 0, 0, width, height);
+
+        canvas.toBlob(
+          (blob) => {
+            if (!blob) {
+              setUploadError('Could not compress image.');
+              return;
+            }
+
+            const compressedReader = new FileReader();
+            compressedReader.onload = () => {
+              const dataUrl = String(compressedReader.result || '');
+              const originalSize = (file.size / 1024).toFixed(1);
+              const compressedSize = (blob.size / 1024).toFixed(1);
+              setUploadError(`✓ Compressed from ${originalSize}KB to ${compressedSize}KB (base64)`);
+              onChange(dataUrl);
+            };
+            compressedReader.readAsDataURL(blob);
+          },
+          'image/webp',
+          0.75
+        );
+      };
+      img.src = String(event.target.result || '');
     };
     reader.onerror = () => {
       setUploadError('Could not read this file. Try another image.');
@@ -572,12 +636,6 @@ function MediaUploadField({ label, value, onChange }) {
   return (
     <label className="grid gap-2">
       <span className="text-sm font-bold text-[var(--deep-navy)]">{prettyLabel(label)}</span>
-      {text && (
-        <div className="flex items-center gap-3 rounded-lg border border-[var(--surface-grey)] bg-white p-3">
-          <img src={text} alt="" className="h-14 w-14 rounded-md object-contain" />
-          <span className="min-w-0 flex-1 truncate text-xs font-semibold text-[var(--muted-blue)]">{text}</span>
-        </div>
-      )}
       <input
         value={text}
         onChange={(event) => onChange(event.target.value)}
@@ -590,11 +648,12 @@ function MediaUploadField({ label, value, onChange }) {
             type="file"
             accept="image/*"
             onChange={handleUpload}
-            className="absolute inset-0 cursor-pointer opacity-0"
+            disabled={isUploading}
+            className="absolute inset-0 cursor-pointer opacity-0 disabled:cursor-not-allowed"
             aria-label={`Upload ${prettyLabel(label)}`}
           />
-          <span className="rounded-md border border-[var(--gold)] bg-white px-3 py-2 text-xs font-bold text-[var(--deep-navy)]">
-            Upload from device
+          <span className="rounded-md border border-[var(--gold)] bg-white px-3 py-2 text-xs font-bold text-[var(--deep-navy)] disabled:opacity-50">
+            {isUploading ? 'Uploading...' : 'Upload from device'}
           </span>
         </span>
         {text && (
@@ -607,6 +666,17 @@ function MediaUploadField({ label, value, onChange }) {
           </button>
         )}
       </div>
+      {text && (
+        <div className="overflow-hidden rounded-lg border border-[var(--surface-grey)] bg-white p-2">
+          <div className="flex gap-2">
+            <img src={text} alt="" className="h-16 w-16 flex-shrink-0 rounded object-contain" />
+            <div className="min-w-0 flex-1 py-1">
+              <p className="text-xs text-[var(--muted-blue)]">Preview:</p>
+              <p className="break-all text-xs font-semibold text-[var(--deep-navy)]">{text}</p>
+            </div>
+          </div>
+        </div>
+      )}
       {uploadError && <span className="text-xs font-semibold text-red-700">{uploadError}</span>}
     </label>
   );
