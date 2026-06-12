@@ -29,7 +29,7 @@ export default function Footer() {
             <ul className="space-y-2 text-[var(--warm-white)]">
               {/* <li><Link to="/insights" className="transition hover:text-[var(--gold)]">Insights</Link></li> */}
               <li><a href={brand.linkedinUrl} target="_blank" rel="noreferrer" className="transition hover:text-[var(--gold)]">LinkedIn</a></li>
-              <li><a href={brand.inwardFireUrl} className="transition hover:text-[var(--gold)]">TheValluru.org</a></li>
+              <li><a href="https://www.thevalluru.org/" target="_blank" rel="noreferrer" className="transition hover:text-[var(--gold)]">TheValluru.org</a></li>
               <li><Link to="/contact#contact-form" className="transition hover:text-[var(--gold)]">Contact</Link></li>
             </ul>
           </div>
