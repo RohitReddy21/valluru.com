@@ -41,6 +41,9 @@ const uploadableImageFields = new Set([
 
 const uploadMaxBytes = 2.5 * 1024 * 1024;
 
+const excludedKeys = new Set(['id', 'type']);
+const ctaFields = new Set(['primarycta', 'secondarycta', 'tertiarycta']);
+
 const designFields = [
   {
     key: 'sectionSpacing',
@@ -121,6 +124,17 @@ function prettyLabel(key) {
     .replace(/([A-Z])/g, ' $1')
     .replace(/[-_]/g, ' ')
     .replace(/\b\w/g, (letter) => letter.toUpperCase());
+}
+
+function isCtaField(label) {
+  return ctaFields.has(String(label || '').toLowerCase());
+}
+
+function createEmptyCta(label) {
+  return {
+    label: `${prettyLabel(label).replace(/\s*Cta$/i, '')} Button`,
+    href: '/',
+  };
 }
 
 function isPlainObject(value) {
@@ -679,7 +693,65 @@ function MediaUploadField({ label, value, onChange }) {
   );
 }
 
+function CtaEditor({ label, value, onChange, depth = 0, path = [] }) {
+  const hasButton = isPlainObject(value);
+
+  if (!hasButton) {
+    return (
+      <div className={depth === 0 ? 'grid gap-4' : 'grid gap-4 rounded-xl border border-[var(--surface-grey)] bg-white p-4'}>
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <div>
+            <h4 className="font-bold text-[var(--deep-navy)]">{prettyLabel(label)}</h4>
+            <p className="mt-1 text-sm font-semibold text-[var(--muted-blue)]">This button is deleted and will not show on the site.</p>
+          </div>
+          <button
+            type="button"
+            className="rounded-md border border-[var(--gold)] bg-white px-3 py-2 text-sm font-bold text-[var(--deep-navy)] hover:bg-[var(--warm-white)]"
+            onClick={() => onChange(createEmptyCta(label))}
+          >
+            Add button
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className={depth === 0 ? 'grid gap-4' : 'grid gap-4 rounded-xl border border-[var(--surface-grey)] bg-white p-4'}>
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <h4 className="font-bold text-[var(--deep-navy)]">{prettyLabel(label)}</h4>
+        <button
+          type="button"
+          className="rounded-md border border-red-200 bg-white px-3 py-2 text-sm font-bold text-red-700 hover:bg-red-50"
+          onClick={() => onChange(null)}
+        >
+          Delete button
+        </button>
+      </div>
+      <div className="grid gap-4 md:grid-cols-2">
+        {Object.entries(value)
+          .filter(([key]) => !excludedKeys.has(key))
+          .map(([key, childValue]) => (
+            <div key={key} className={isPlainObject(childValue) || Array.isArray(childValue) ? 'md:col-span-2' : ''}>
+              <FieldEditor
+                label={key}
+                value={childValue}
+                depth={depth + 1}
+                path={[...path, label]}
+                onChange={(nextChildValue) => onChange({ ...value, [key]: nextChildValue })}
+              />
+            </div>
+          ))}
+      </div>
+    </div>
+  );
+}
+
 function FieldEditor({ label, value, onChange, depth = 0, path = [] }) {
+  if (isCtaField(label)) {
+    return <CtaEditor label={label} value={value} onChange={onChange} depth={depth} path={path} />;
+  }
+
   if (typeof value === 'boolean') {
     return <BooleanField label={label} value={value} onChange={onChange} />;
   }
@@ -793,17 +865,19 @@ function FieldEditor({ label, value, onChange, depth = 0, path = [] }) {
       <div className={depth === 0 ? 'grid gap-5' : 'grid gap-4 rounded-xl border border-[var(--surface-grey)] bg-white p-4'}>
         {depth > 0 && <h4 className="font-bold text-[var(--deep-navy)]">{prettyLabel(label)}</h4>}
         <div className="grid gap-4 md:grid-cols-2">
-          {Object.entries(value).map(([key, childValue]) => (
-            <div key={key} className={isPlainObject(childValue) || Array.isArray(childValue) ? 'md:col-span-2' : ''}>
-              <FieldEditor
-                label={key}
-                value={childValue}
-                depth={depth + 1}
-                path={[...path, label]}
-                onChange={(nextChildValue) => onChange({ ...value, [key]: nextChildValue })}
-              />
-            </div>
-          ))}
+          {Object.entries(value)
+            .filter(([key]) => !excludedKeys.has(key))
+            .map(([key, childValue]) => (
+              <div key={key} className={isPlainObject(childValue) || Array.isArray(childValue) ? 'md:col-span-2' : ''}>
+                <FieldEditor
+                  label={key}
+                  value={childValue}
+                  depth={depth + 1}
+                  path={[...path, label]}
+                  onChange={(nextChildValue) => onChange({ ...value, [key]: nextChildValue })}
+                />
+              </div>
+            ))}
         </div>
       </div>
     );
@@ -1371,7 +1445,7 @@ export default function Admin() {
                   value={contentJson}
                   onChange={(event) => setContentJson(event.target.value)}
                   spellCheck="false"
-                  className="mt-4 min-h-[24rem] w-full rounded-lg border border-[var(--surface-grey)] bg-white p-4 font-mono text-sm text-[var(--deep-navy)] outline-none focus:border-[var(--gold)]"
+                  className="mt-4 min-h-[24rem] w-full rounded-lg border border-[var(--surface-grey)] bg-white p-4 text-sm text-[var(--deep-navy)] outline-none focus:border-[var(--gold)]"
                 />
               )}
             </div>

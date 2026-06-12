@@ -3,13 +3,13 @@
 
 @layer base {
   :root {
-    --deep-navy: #0F172A;
-    --mid-navy: #334155;
+    --deep-navy: #1D2226;
+    --mid-navy: #38434F;
     --gold: #0A66C2;
-    --warm-white: #F8FAFC;
-    --surface-grey: #E2E8F0;
-    --muted-blue: #475569;
-    --accent-copper: #2563EB;
+    --warm-white: #F3F2EF;
+    --surface-grey: #D0D7DE;
+    --muted-blue: #56687A;
+    --accent-copper: #004182;
     --aura-teal: #378FE9;
     --signal-lime: #70B5F9;
     --ink-soft: #27313A;
@@ -21,11 +21,13 @@
     --hero-media-opacity: 0.58;
     --hero-overlay-opacity: 0.48;
     --font-scale: 1;
+    --site-font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   }
 
   html {
     scroll-behavior: smooth;
     overflow-x: hidden;
+    font-family: var(--site-font-family);
   }
 
   body {
@@ -34,9 +36,17 @@
     min-height: 100vh;
     background: var(--warm-white);
     color: var(--deep-navy);
-    font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    font-family: var(--site-font-family);
     font-size: calc(16px * var(--font-scale));
     overflow-x: hidden;
+  }
+
+  button,
+  input,
+  optgroup,
+  select,
+  textarea {
+    font: inherit;
   }
 
   * {
@@ -496,17 +506,174 @@
     transform: translateY(-0.45rem) rotateX(1.5deg);
   }
 
-  .text-flow-list {
-    background: #ffffff;
+  /* ─── TextFlow redesign ─────────────────────────────────── */
+
+  .tf-grid {
+    display: grid;
+    gap: 3rem;
+    align-items: center;
   }
 
-  .text-flow-list li span:last-child {
-    line-height: 1.75;
+  @media (min-width: 768px) {
+    .tf-grid {
+      grid-template-columns: 1fr 1fr;
+      gap: 4rem;
+    }
   }
+
+  .tf-copy {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+  }
+
+  .tf-eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--gold);
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+  }
+
+  .tf-eyebrow::before {
+    content: '';
+    display: inline-block;
+    width: 1.75rem;
+    height: 2px;
+    background: var(--gold);
+    border-radius: 9999px;
+  }
+
+  .tf-title {
+    color: var(--deep-navy);
+    font-size: clamp(1.75rem, 3.5vw, 2.75rem);
+    font-weight: 800;
+    line-height: 1.15;
+    letter-spacing: -0.025em;
+    text-wrap: balance;
+  }
+
+  .tf-body {
+    color: var(--muted-blue);
+    font-size: 0.9375rem;
+    line-height: 1.75;
+    max-width: 44ch;
+  }
+
+  .tf-body-stack {
+    display: flex;
+    flex-direction: column;
+    gap: 0.85rem;
+  }
+
+  /* Intro sentence above the bullet list */
+  .tf-bullets-label {
+    font-size: 0.8125rem;
+    font-weight: 600;
+    color: var(--gold);
+    padding: 0.75rem 1.25rem 0.35rem;
+    letter-spacing: 0.01em;
+  }
+
+  /* Card — flat LinkedIn palette, no shadows or gradients */
+  .tf-card {
+    position: relative;
+    overflow: hidden;
+    border-radius: 0.5rem;
+    border: 1px solid var(--surface-grey);
+    background: #ffffff;
+    transition: border-color 250ms ease;
+  }
+
+  .tf-card:hover {
+    border-color: var(--gold);
+  }
+
+  /* Card header — thin LinkedIn blue top bar */
+  .tf-card-header {
+    height: 4px;
+    background: var(--gold);
+    display: flex;
+    align-items: center;
+    gap: 0;
+    padding: 0;
+    border-bottom: none;
+  }
+
+  /* Hide the dot spans — header is now just a blue bar */
+  .tf-card-dot {
+    display: none;
+  }
+
+  /* List */
+  .tf-list {
+    list-style: none;
+    margin: 0;
+    padding: 0.5rem 0;
+  }
+
+  .tf-list-item {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.8rem 1.25rem;
+    border-left: 3px solid transparent;
+    cursor: default;
+    transition: background 200ms ease, border-left-color 200ms ease;
+  }
+
+  .tf-list-item:hover {
+    background: color-mix(in srgb, var(--gold) 7%, #ffffff);
+    border-left-color: var(--gold);
+  }
+
+  .tf-list-item + .tf-list-item {
+    border-top: 1px solid color-mix(in srgb, var(--surface-grey) 68%, #ffffff);
+  }
+
+  .tf-num {
+    flex-shrink: 0;
+    min-width: 1.75rem;
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    color: var(--gold);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .tf-arrow {
+    flex-shrink: 0;
+    font-size: 0.75rem;
+    color: var(--gold);
+    opacity: 0;
+    transform: translateX(-4px);
+    transition: opacity 180ms ease, transform 180ms ease;
+  }
+
+  .tf-list-item:hover .tf-arrow {
+    opacity: 1;
+    transform: translateX(0);
+  }
+
+  .tf-bullet-text {
+    font-size: 0.9375rem;
+    font-weight: 500;
+    color: var(--deep-navy);
+    line-height: 1.5;
+  }
+
+  /* Glow removed — keeping element in JSX but hidden */
+  .tf-card-glow {
+    display: none;
+  }
+
 
   .personal-hero {
     background:
-      linear-gradient(110deg, #ffffff 0%, #ffffff 42%, #eff6ff 100%);
+      linear-gradient(110deg, #ffffff 0%, #ffffff 42%, color-mix(in srgb, var(--gold) 6%, #ffffff) 100%);
     color: var(--deep-navy);
   }
 
@@ -543,8 +710,8 @@
     pointer-events: none;
     opacity: 0.23;
     background-image:
-      linear-gradient(to top, rgba(10, 102, 194, 0.2), rgba(10, 102, 194, 0)),
-      repeating-linear-gradient(90deg, transparent 0 4.8rem, rgba(10, 102, 194, 0.08) 4.8rem 5rem, transparent 5rem 8.5rem);
+      linear-gradient(to top, color-mix(in srgb, var(--gold) 20%, transparent), transparent),
+      repeating-linear-gradient(90deg, transparent 0 4.8rem, color-mix(in srgb, var(--gold) 8%, transparent) 4.8rem 5rem, transparent 5rem 8.5rem);
     clip-path: polygon(0 52%, 8% 52%, 8% 42%, 16% 42%, 16% 58%, 27% 58%, 27% 32%, 34% 32%, 34% 65%, 45% 65%, 45% 45%, 55% 45%, 55% 70%, 66% 70%, 66% 38%, 77% 38%, 77% 61%, 88% 61%, 88% 30%, 100% 30%, 100% 100%, 0 100%);
   }
 
@@ -555,7 +722,7 @@
     height: 42%;
     pointer-events: none;
     opacity: 0.36;
-    background-image: radial-gradient(circle, rgba(10, 102, 194, 0.22) 1.1px, transparent 1.2px);
+    background-image: radial-gradient(circle, color-mix(in srgb, var(--gold) 22%, transparent) 1.1px, transparent 1.2px);
     background-size: 18px 18px;
     mask-image: linear-gradient(to top, #000, transparent);
   }
@@ -595,7 +762,7 @@
   }
 
   .hero-description {
-    color: #1e293b;
+    color: var(--muted-blue);
     @apply max-w-xl text-base font-medium leading-7;
   }
 
@@ -611,7 +778,7 @@
 
   .hero-btn-primary {
     background: var(--gold);
-    color: #ffffff;
+    color: white;
     box-shadow: 0 18px 38px rgb(10 102 194 / 0.18);
   }
 
@@ -621,19 +788,19 @@
 
   .hero-btn-secondary {
     color: var(--gold);
-    border: 1px solid rgba(10, 102, 194, 0.42);
-    background: rgba(255, 255, 255, 0.72);
+    border: 1px solid color-mix(in srgb, var(--gold) 42%, transparent);
+    background: color-mix(in srgb, #ffffff 72%, transparent);
   }
 
   .hero-btn-ghost {
     color: var(--gold);
-    border: 1px solid rgba(10, 102, 194, 0.28);
+    border: 1px solid color-mix(in srgb, var(--gold) 28%, transparent);
     background: transparent;
   }
 
   .proof-glass {
-    border: 1px solid rgba(226, 232, 240, 0.92);
-    background: rgba(255, 255, 255, 0.78);
+    border: 1px solid color-mix(in srgb, var(--surface-grey) 92%, transparent);
+    background: color-mix(in srgb, #ffffff 78%, transparent);
     box-shadow: 0 24px 60px rgb(15 23 42 / 0.08);
     backdrop-filter: blur(18px);
     @apply mt-3 flex max-w-lg items-center gap-5 rounded-lg p-5;
@@ -641,7 +808,7 @@
 
   .proof-icon,
   .expertise-icon {
-    background: #EFF6FF;
+    background: color-mix(in srgb, var(--gold) 8%, #ffffff);
     color: var(--gold);
     @apply inline-flex shrink-0 items-center justify-center rounded-lg text-xs font-black;
   }
@@ -670,7 +837,7 @@
     inset: 0.5rem;
     z-index: -1;
     border-radius: 9999px;
-    background: rgba(37, 99, 235, 0.12);
+    background: color-mix(in srgb, var(--gold) 12%, transparent);
     box-shadow: 0 0 70px rgb(37 99 235 / 0.18);
   }
 
@@ -695,8 +862,8 @@
   }
 
   .expertise-card {
-    background: rgba(255, 255, 255, 0.86);
-    border: 1px solid rgba(226, 232, 240, 0.92);
+    background: color-mix(in srgb, #ffffff 86%, transparent);
+    border: 1px solid color-mix(in srgb, var(--surface-grey) 92%, transparent);
     box-shadow: 0 18px 36px rgb(15 23 42 / 0.1);
     backdrop-filter: blur(16px);
     animation: gentle-float 5.8s ease-in-out infinite;
@@ -718,7 +885,7 @@
   }
 
   .expertise-chip {
-    border: 1px solid rgba(10, 102, 194, 0.16);
+    border: 1px solid color-mix(in srgb, var(--gold) 16%, transparent);
     background: #ffffff;
     color: var(--deep-navy);
     @apply shrink-0 rounded-full px-4 py-2 text-xs font-black shadow-sm shadow-slate-900/5;

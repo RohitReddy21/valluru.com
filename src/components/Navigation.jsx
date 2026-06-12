@@ -11,7 +11,7 @@ export default function Navigation() {
     { label: 'About', href: '/about' },
     { label: 'Advisory', href: '/advisory' },
     // { label: 'Investments', href: '/investments' },
-    { label: 'Insights', href: '/insights' },
+    // { label: 'Insights', href: '/insights' },
   ];
 
   const linkClass = ({ isActive }) => (

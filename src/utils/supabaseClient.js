@@ -163,7 +163,7 @@ function fileToBase64(file) {
   });
 }
 
-export function generateImageVariants(imageUrl, imagePath) {
+export function generateImageVariants(imageUrl) {
   if (!imageUrl || !supabase) return { original: imageUrl };
 
   // For Supabase URLs, we can add query parameters for transformations

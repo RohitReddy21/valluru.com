@@ -320,25 +320,56 @@ function PageHero({ section, pageKey }) {
 }
 
 function TextFlow({ section, pageKey }) {
+  const paragraphs = Array.isArray(section.bodyParagraphs) && section.bodyParagraphs.length > 0
+    ? section.bodyParagraphs
+    : hasText(section.body) ? [section.body] : [];
+
   return (
     <SectionShell section={section} pageKey={pageKey}>
       <div className="container-custom">
-        {hasText(section.eyebrow) && <div className="eyebrow mb-4">{section.eyebrow}</div>}
-        {hasText(section.title) && <h2 className="section-title">{section.title}</h2>}
-        <div className="mt-12 grid gap-12 md:grid-cols-2">
-          <div className="text-flow-copy stagger-item">
-            {hasText(section.body) && <p className="text-xl leading-relaxed text-[var(--muted-blue)]">{section.body}</p>}
-          </div>
-          <div className="surface-card text-flow-list stagger-item">
-            <ul className="space-y-3">
-              {section.bullets?.map((bullet, idx) => (
-                <li key={bullet} className="stagger-child flex items-start gap-3" style={{ '--stagger-index': idx }}>
-                  <span className="mt-2 h-2 w-2 shrink-0 rounded-full bg-[var(--gold)]"></span>
-                  <span className="text-[var(--deep-navy)]">{bullet}</span>
-                </li>
+        <div className="tf-grid">
+          {/* Left column */}
+          <div className="tf-copy stagger-item">
+            {hasText(section.eyebrow) && (
+              <div className="tf-eyebrow">{section.eyebrow}</div>
+            )}
+            {hasText(section.title) && (
+              <h2 className="tf-title">{section.title}</h2>
+            )}
+            <div className="tf-body-stack">
+              {paragraphs.map((para, i) => (
+                <p key={i} className="tf-body">{para}</p>
               ))}
-            </ul>
+            </div>
           </div>
+
+          {/* Right column — LinkedIn-style list card */}
+          {section.bullets?.length > 0 && (
+            <div className="tf-card stagger-item">
+              <div className="tf-card-header" aria-hidden="true">
+                <span className="tf-card-dot" />
+                <span className="tf-card-dot" />
+                <span className="tf-card-dot" />
+              </div>
+              {hasText(section.bulletsLabel) && (
+                <p className="tf-bullets-label">{section.bulletsLabel}</p>
+              )}
+              <ul className="tf-list">
+                {section.bullets.map((bullet, idx) => (
+                  <li
+                    key={bullet}
+                    className="tf-list-item stagger-child"
+                    style={{ '--stagger-index': idx }}
+                  >
+                    <span className="tf-num">{String(idx + 1).padStart(2, '0')}</span>
+                    <span className="tf-arrow" aria-hidden="true">→</span>
+                    <span className="tf-bullet-text">{bullet}</span>
+                  </li>
+                ))}
+              </ul>
+              <div className="tf-card-glow" aria-hidden="true" />
+            </div>
+          )}
         </div>
         <MediaGallery items={section.mediaItems} />
       </div>
@@ -354,24 +385,32 @@ function Cards({ section, pageKey }) {
   return (
     <SectionShell section={section} pageKey={pageKey}>
       <div className="container-custom">
-        {hasText(section.eyebrow) && <div className="eyebrow mb-4">{section.eyebrow}</div>}
+        {hasText(section.eyebrow) && <div className="eyebrow mb-3">{section.eyebrow}</div>}
         {hasText(section.title) && <h2 className="section-title">{section.title}</h2>}
-        {hasText(section.body) && <p className="section-copy mb-12 mt-5">{section.body}</p>}
+        {hasText(section.body) && <p className="section-copy mt-4 mb-8">{section.body}</p>}
 
-        <div className={gridClass}>
-          {visibleCards.map((card, idx) => (
-            <article key={`${card.title}-${idx}`} className="surface-card card-hover stagger-item">
-              <CardHeader card={card} fallbackNumber={idx + 1} />
-              {hasText(card.body) && <p className="text-sm leading-relaxed text-[var(--muted-blue)]">{card.body}</p>}
-              {hasText(card.link) && <p className="mt-5 rounded-lg bg-[var(--warm-white)] px-4 py-3 text-sm font-semibold text-[var(--deep-navy)]">{card.link}</p>}
-            </article>
-          ))}
+        <div className={`${gridClass} mt-8`}>
+          {visibleCards.map((card, idx) => {
+            const title = card.title || card.company || card.lane;
+            const bodyIsDuplicate = card.body?.trim() === title?.trim();
+            return (
+              <article key={`${card.title}-${idx}`} className="surface-card card-hover stagger-item">
+                <CardHeader card={card} fallbackNumber={idx + 1} />
+                {hasText(card.body) && !bodyIsDuplicate && (
+                  <p className="text-sm leading-relaxed text-[var(--muted-blue)]">{card.body}</p>
+                )}
+                {hasText(card.link) && (
+                  <p className="mt-5 rounded-lg bg-[var(--warm-white)] px-4 py-3 text-sm font-semibold text-[var(--deep-navy)]">{card.link}</p>
+                )}
+              </article>
+            );
+          })}
         </div>
 
         <MediaGallery items={section.mediaItems} />
 
         {section.primaryCta && (
-          <div className="mt-12 flex justify-center">
+          <div className="mt-10 flex justify-center">
             <Link to={section.primaryCta.href} className="btn-primary">
               {section.primaryCta.label}
             </Link>
@@ -445,7 +484,7 @@ function ContactForm({ section, pageKey }) {
       } else {
         setResult("Something went wrong. Please try again.");
       }
-    } catch (error) {
+    } catch {
       setResult("Error sending message. Please try again.");
     } finally {
       setIsLoading(false);
@@ -468,7 +507,7 @@ function ContactForm({ section, pageKey }) {
 
             <div className="relative z-10">
               <div className="grid gap-6 md:grid-cols-2">
-                {visibleFields.map((field, index) => (
+                {visibleFields.map((field) => (
                   <label key={field.name} className={`group block ${field.type === 'textarea' ? 'md:col-span-2' : ''}`}>
                     <div className="flex items-center gap-2 mb-3">
                       <span className="text-sm font-semibold uppercase tracking-wider text-[var(--deep-navy)]">{field.label}</span>

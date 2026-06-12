@@ -1,5 +1,4 @@
 import { Link } from 'react-router-dom';
-import { Link } from 'react-router-dom';
 import { useState } from 'react';
 import ScrollLink from './ScrollLink';
 
@@ -36,19 +35,19 @@ export default function HeroSection({ section }) {
       <div className="container-custom relative z-10 grid items-center gap-0 sm:gap-2 md:gap-8 lg:grid-cols-2">
         <div className="space-y-2 sm:space-y-4">
           <div className="text-sm font-semibold uppercase tracking-widest text-[var(--gold)]">{section.eyebrow}</div>
-          <h1 className="max-w-4xl text-4xl font-bold leading-tight text-black sm:text-5xl md:text-6xl">{section.title}</h1>
-          <p className="max-w-2xl text-lg leading-relaxed text-gray-700 sm:text-xl">{section.body}</p>
+          <h1 className="max-w-4xl text-4xl font-bold leading-tight text-[var(--deep-navy)] sm:text-5xl md:text-6xl">{section.title}</h1>
+          <p className="max-w-2xl text-lg leading-relaxed text-[var(--muted-blue)] sm:text-xl">{section.body}</p>
           {section.supporting && (
-            <p className="max-w-2xl border-l-4 border-[var(--gold)] pl-5 text-base leading-relaxed text-gray-700 sm:text-lg">
+            <p className="max-w-2xl border-l-4 border-[var(--gold)] pl-5 text-base leading-relaxed text-[var(--muted-blue)] sm:text-lg">
               {section.supporting}
             </p>
           )}
 
           <div className="grid max-w-2xl grid-cols-2 gap-3 pt-2 sm:grid-cols-4">
             {proofPoints.map((point) => (
-              <div key={point} className="rounded-lg border border-gray-300 bg-gray-100 px-4 py-3 text-center">
-              <p className="text-sm font-bold text-gray-800">{point}</p>
-            </div>
+              <div key={point} className="rounded-lg border border-[var(--surface-grey)] bg-[var(--warm-white)] px-4 py-3 text-center">
+                <p className="text-sm font-bold text-[var(--deep-navy)]">{point}</p>
+              </div>
             ))}
           </div>
 
@@ -72,7 +71,7 @@ export default function HeroSection({ section }) {
           ) : (
             <div className="flex w-[min(90vw,28rem)] h-[min(90vw,28rem)] flex-col items-center justify-center rounded-full border border-[var(--gold)]/30 bg-transparent p-4 sm:p-6 lg:p-8 text-center lg:w-[30rem] lg:h-[30rem]">
               <div className="mb-5 h-24 w-24 rounded-lg bg-transparent"></div>
-              <p className="text-lg font-bold text-white">Your image goes here</p>
+              <p className="text-lg font-bold text-[var(--deep-navy)]">Your image goes here</p>
               <p className="mt-2 max-w-sm text-sm leading-relaxed text-[var(--warm-white)]">
                 Save your portrait as public/sasidhar-valluru.jpg.
               </p>

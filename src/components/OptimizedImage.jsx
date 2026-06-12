@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 
 export default function OptimizedImage({
   src,
@@ -10,61 +10,26 @@ export default function OptimizedImage({
   fallback = '/placeholder.jpg',
   loading = 'lazy',
 }) {
-  const [imgSrc, setImgSrc] = useState(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [hasError, setHasError] = useState(false);
-
-  useEffect(() => {
-    if (!src) {
-      setImgSrc(fallback);
-      setIsLoading(false);
-      return;
-    }
-
-    // Use Intersection Observer for true lazy loading
-    if (loading === 'lazy') {
-      const observer = new IntersectionObserver(
-        ([entry]) => {
-          if (entry.isIntersecting) {
-            setImgSrc(src);
-            observer.unobserve(entry.target);
-          }
-        },
-        { rootMargin: '50px' }
-      );
-
-      const img = document.createElement('img');
-      observer.observe(img);
-
-      return () => observer.disconnect();
-    } else {
-      setImgSrc(src);
-    }
-  }, [src, loading, fallback]);
+  const [failedSrc, setFailedSrc] = useState('');
+  const resolvedSrc = src || fallback;
+  const displaySrc = failedSrc === resolvedSrc ? fallback : resolvedSrc;
 
   const handleLoad = () => {
-    setIsLoading(false);
     onLoad?.();
   };
 
   const handleError = () => {
-    setHasError(true);
-    setImgSrc(fallback);
-    setIsLoading(false);
-  };
-
-  if (!imgSrc) {
-    return (
-      <div className={`${className} bg-gray-200 animate-pulse`} />
-    );
+    if (displaySrc !== fallback) {
+      setFailedSrc(resolvedSrc);
+    }
   }
 
   return (
     <picture>
       {/* Offer WebP format first for modern browsers */}
-      <source srcSet={convertToWebP(imgSrc)} type="image/webp" />
+      <source srcSet={convertToWebP(displaySrc)} type="image/webp" />
       <img
-        src={hasError ? fallback : imgSrc}
+        src={displaySrc}
         alt={alt}
         className={className}
         width={width}
@@ -92,5 +57,5 @@ function convertToWebP(url) {
 }
 
 export function ImagePlaceholder({ className = '' }) {
-  return <div className={`${className} bg-gray-200 animate-pulse`} />;
+  return <div className={`${className} bg-[var(--surface-grey)] animate-pulse`} />;
 }
