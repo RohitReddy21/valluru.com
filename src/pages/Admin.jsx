@@ -620,6 +620,12 @@ function MediaUploadField({ label, value, onChange }) {
     reader.readAsDataURL(file);
   }
 
+  const displayLabel = text?.startsWith('data:')
+    ? '📷 Image uploaded (compressed)'
+    : text && text.startsWith('http')
+    ? '📷 Image URL'
+    : null;
+
   return (
     <label className="grid gap-2">
       <span className="text-sm font-bold text-[var(--deep-navy)]">{prettyLabel(label)}</span>
@@ -658,13 +664,17 @@ function MediaUploadField({ label, value, onChange }) {
           <div className="flex gap-2">
             <img src={text} alt="" className="h-16 w-16 flex-shrink-0 rounded object-contain" />
             <div className="min-w-0 flex-1 py-1">
-              <p className="text-xs text-[var(--muted-blue)]">Preview:</p>
-              <p className="break-all text-xs font-semibold text-[var(--deep-navy)]">{text}</p>
+              <p className="text-xs font-semibold text-[var(--deep-navy)]">{displayLabel}</p>
+              <p className="mt-1 text-xs text-[var(--muted-blue)]">
+                {text?.startsWith('data:')
+                  ? `✓ Stored in database (${(text.length / 1024).toFixed(0)}KB)`
+                  : text?.substring(0, 50) + (text?.length > 50 ? '...' : '')}
+              </p>
             </div>
           </div>
         </div>
       )}
-      {uploadError && <span className="text-xs font-semibold text-red-700">{uploadError}</span>}
+      {uploadError && <span className="text-xs font-semibold text-green-700">{uploadError}</span>}
     </label>
   );
 }
