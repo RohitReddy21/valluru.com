@@ -15,7 +15,7 @@ export default function Footer() {
           </div>
 
           <div>
-            <h4 className="mb-4 text-sm font-semibold text-[var(--gold)]">Navigation</h4>
+            <h4 className="mb-4 text-sm font-semibold text-[var(--gold)]">Quick Links</h4>
             <ul className="space-y-2 text-[var(--warm-white)]">
               <li><Link to="/" className="transition hover:text-[var(--gold)]">Home</Link></li>
               <li><Link to="/about" className="transition hover:text-[var(--gold)]">About</Link></li>
@@ -27,7 +27,7 @@ export default function Footer() {
           <div>
             <h4 className="mb-4 text-sm font-semibold text-[var(--gold)]">Resources</h4>
             <ul className="space-y-2 text-[var(--warm-white)]">
-              <li><Link to="/insights" className="transition hover:text-[var(--gold)]">Insights</Link></li>
+              {/* <li><Link to="/insights" className="transition hover:text-[var(--gold)]">Insights</Link></li> */}
               <li><a href={brand.linkedinUrl} target="_blank" rel="noreferrer" className="transition hover:text-[var(--gold)]">LinkedIn</a></li>
               <li><a href={brand.inwardFireUrl} className="transition hover:text-[var(--gold)]">TheValluru.org</a></li>
               <li><Link to="/contact" className="transition hover:text-[var(--gold)]">Contact</Link></li>
