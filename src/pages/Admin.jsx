@@ -563,20 +563,6 @@ function MediaUploadField({ label, value, onChange }) {
     setUploadError('');
 
     try {
-      // Try cloud upload first
-      const { uploadImage } = await import('../utils/supabaseClient');
-      const result = await uploadImage(file, 'admin-uploads');
-
-      if (result.url) {
-        onChange(result.url);
-        const sizeMB = (result.size / 1024 / 1024).toFixed(2);
-        setUploadError(`✓ Uploaded successfully (${sizeMB}MB)`);
-      } else {
-        // Fallback to base64 if cloud upload not available
-        fallbackBase64Upload(file);
-      }
-    } catch (error) {
-      console.warn('Cloud upload failed, using base64:', error);
       fallbackBase64Upload(file);
     } finally {
       setIsUploading(false);
@@ -616,7 +602,8 @@ function MediaUploadField({ label, value, onChange }) {
               const dataUrl = String(compressedReader.result || '');
               const originalSize = (file.size / 1024).toFixed(1);
               const compressedSize = (blob.size / 1024).toFixed(1);
-              setUploadError(`✓ Compressed from ${originalSize}KB to ${compressedSize}KB (base64)`);
+              const savings = ((1 - blob.size / file.size) * 100).toFixed(0);
+              setUploadError(`✓ ${originalSize}KB → ${compressedSize}KB (${savings}% smaller)`);
               onChange(dataUrl);
             };
             compressedReader.readAsDataURL(blob);

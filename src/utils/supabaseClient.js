@@ -3,30 +3,52 @@ import { createClient } from '@supabase/supabase-js';
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
 const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
-if (!supabaseUrl || !supabaseKey) {
-  console.warn('Supabase credentials not configured. Image uploads will use base64 fallback.');
+console.log('🔍 Supabase Config Check:');
+console.log('   URL:', supabaseUrl ? '✓ Found' : '✗ Missing');
+console.log('   Key:', supabaseKey ? '✓ Found' : '✗ Missing');
+
+let supabase = null;
+
+if (supabaseUrl && supabaseKey) {
+  try {
+    supabase = createClient(supabaseUrl, supabaseKey);
+    console.log('✅ Supabase initialized successfully');
+  } catch (error) {
+    console.error('❌ Failed to initialize Supabase:', error);
+  }
+} else {
+  console.warn('⚠️ Supabase not configured - will use base64 fallback');
 }
 
-export const supabase = supabaseUrl && supabaseKey 
-  ? createClient(supabaseUrl, supabaseKey)
-  : null;
-
+export { supabase };
 export const BUCKET_NAME = 'valluru-images';
 export const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
 
 export async function uploadImage(file, folder = 'general') {
+  console.log('uploadImage called:', { fileName: file.name, size: file.size, folder });
+
   if (!supabase) {
-    console.warn('Supabase not configured, returning base64');
-    return fileToBase64(file);
+    console.warn('Supabase not configured, using base64 fallback');
+    const base64 = await fileToBase64(file);
+    return { url: base64, type: 'base64' };
   }
 
   try {
     // Compress image before upload
     const compressed = await compressImage(file);
-    
+    console.log('Image compressed:', {
+      original: file.size,
+      compressed: compressed.size,
+      saved: ((1 - compressed.size / file.size) * 100).toFixed(1) + '%'
+    });
+
     // Generate unique filename
     const ext = getFileExtension(file.type);
-    const filename = `${folder}/${Date.now()}-${Math.random().toString(36).substr(2, 9)}.${ext}`;
+    const timestamp = Date.now();
+    const random = Math.random().toString(36).substr(2, 9);
+    const filename = `${folder}/${timestamp}-${random}.${ext}`;
+
+    console.log('Uploading to:', BUCKET_NAME, filename);
 
     // Upload to Supabase
     const { data, error } = await supabase.storage
@@ -36,22 +58,32 @@ export async function uploadImage(file, folder = 'general') {
         upsert: false,
       });
 
-    if (error) throw error;
+    if (error) {
+      console.error('Upload error:', error);
+      throw error;
+    }
+
+    console.log('Upload successful:', data);
 
     // Generate public URL
     const { data: publicUrl } = supabase.storage
       .from(BUCKET_NAME)
       .getPublicUrl(data.path);
 
+    console.log('Public URL:', publicUrl.publicUrl);
+
     return {
       url: publicUrl.publicUrl,
       path: data.path,
       filename: filename,
       size: compressed.size,
+      type: 'cloud',
     };
   } catch (error) {
     console.error('Image upload error:', error);
-    throw new Error(`Upload failed: ${error.message}`);
+    console.log('Falling back to base64');
+    const base64 = await fileToBase64(file);
+    return { url: base64, type: 'base64' };
   }
 }
 
