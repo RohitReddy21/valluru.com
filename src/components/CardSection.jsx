@@ -1,4 +1,16 @@
 import { Link } from 'react-router-dom';
+import ScrollLink from './ScrollLink';
+
+function renderCta(cta, className) {
+  if (!cta) return null;
+  const isAnchor = cta.href.includes('#');
+  const Component = isAnchor ? ScrollLink : Link;
+  return (
+    <Component key={cta.href} to={cta.href} className={className}>
+      {cta.label}
+    </Component>
+  );
+}
 
 export default function CardSection({ section }) {
   const isFeatureGrid = section.cards?.length <= 3;
@@ -23,9 +35,7 @@ export default function CardSection({ section }) {
 
         {section.primaryCta && (
           <div className="mt-12 flex justify-center">
-            <Link to={section.primaryCta.href} className="btn-primary">
-              {section.primaryCta.label}
-            </Link>
+            {renderCta(section.primaryCta, 'btn-primary')}
           </div>
         )}
       </div>

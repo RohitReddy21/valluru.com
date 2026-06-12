@@ -44,7 +44,7 @@ export const defaultSiteContent = {
           body: 'I build, back, and scale companies that need technology to work in the real world. My work sits at the intersection of applied AI, product architecture, operating-model design, India execution, enterprise workflows, and delivery governance.',
           supporting: 'Build. Back. Scale. Govern. The work is not only to imagine the future. The work is to build the operating spine that can carry it.',
           proofPoints: ['Build', 'Back', 'Scale', 'Govern'],
-          primaryCta: { label: 'Start a Working Conversation', href: '/contact' },
+          primaryCta: { label: 'Start a Working Conversation', href: '/contact#contact-form' },
           secondaryCta: { label: 'View Investments', href: '/investments' },
           tertiaryCta: { label: 'Read Insights', href: '/insights' },
           media: { type: 'image', url: '/pic1.jpeg', alt: 'Sasidhar Valluru professional portrait' },
@@ -222,7 +222,7 @@ export const defaultSiteContent = {
           eyebrow: 'Investments',
           title: 'Building, backing, shaping, and operating ventures with conviction.',
           body: 'I invest in and build operating companies where technology, workflow, data, and execution can create durable advantage. My focus is not passive ownership.',
-          primaryCta: { label: 'Discuss an Investment Conversation', href: '/contact' },
+          primaryCta: { label: 'Discuss an Investment Conversation', href: '/contact#contact-form' },
         }),
         {
           id: 'investments-thesis',
@@ -307,7 +307,7 @@ export const defaultSiteContent = {
           eyebrow: 'Advisory',
           title: 'Executive advisory for problems that require judgment and execution detail.',
           body: 'I work with founders, CTOs, product leaders, investors, and enterprise teams when the problem is serious enough to need operating discipline, not another decorative deck.',
-          primaryCta: { label: 'Start a Working Conversation', href: '/contact' },
+          primaryCta: { label: 'Start a Working Conversation', href: '/contact#contact-form' },
         }),
         {
           id: 'advisory-opening',

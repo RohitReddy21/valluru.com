@@ -1,5 +1,17 @@
 import { Link } from 'react-router-dom';
 import { useState } from 'react';
+import ScrollLink from './ScrollLink';
+
+function renderCta(cta, className) {
+  if (!cta) return null;
+  const isAnchor = cta.href.includes('#');
+  const Component = isAnchor ? ScrollLink : Link;
+  return (
+    <Component key={cta.href} to={cta.href} className={className}>
+      {cta.label}
+    </Component>
+  );
+}
 
 export default function HeroSection({ section }) {
   const [imageFailed, setImageFailed] = useState(false);
@@ -40,21 +52,9 @@ export default function HeroSection({ section }) {
           </div>
 
           <div className="flex flex-wrap gap-4 pt-4">
-            {section.primaryCta && (
-              <Link to={section.primaryCta.href} className="btn-primary">
-                {section.primaryCta.label}
-              </Link>
-            )}
-            {section.secondaryCta && (
-              <Link to={section.secondaryCta.href} className="btn-secondary">
-                {section.secondaryCta.label}
-              </Link>
-            )}
-            {section.tertiaryCta && (
-              <Link to={section.tertiaryCta.href} className="btn-warm">
-                {section.tertiaryCta.label}
-              </Link>
-            )}
+            {renderCta(section.primaryCta, 'btn-primary')}
+            {renderCta(section.secondaryCta, 'btn-secondary')}
+            {renderCta(section.tertiaryCta, 'btn-warm')}
           </div>
         </div>
 

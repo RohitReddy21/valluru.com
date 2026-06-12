@@ -19,7 +19,7 @@ export default function Footer() {
             <ul className="space-y-2 text-[var(--warm-white)]">
               <li><Link to="/" className="transition hover:text-[var(--gold)]">Home</Link></li>
               <li><Link to="/about" className="transition hover:text-[var(--gold)]">About</Link></li>
-              <li><Link to="/investments" className="transition hover:text-[var(--gold)]">Investments</Link></li>
+              {/* <li><Link to="/investments" className="transition hover:text-[var(--gold)]">Investments</Link></li> */}
               <li><Link to="/advisory" className="transition hover:text-[var(--gold)]">Advisory</Link></li>
             </ul>
           </div>

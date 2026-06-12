@@ -1,8 +1,9 @@
-import { Link } from 'react-router-dom';
 import { useEffect, useRef, useState } from 'react';
+import { Link } from 'react-router-dom';
 import AdminEditButton from './AdminEditButton';
 import { InlineMedia, MediaGallery, SectionBackground } from './MediaBlock';
 import { normalizeMediaUrl } from '../utils/mediaUrl';
+import ScrollLink from './ScrollLink';
 import fallbackPortrait from '../assets/sasidhar-valluru.jpg';
 
 function getScrollMotion(section) {
@@ -162,11 +163,15 @@ function CtaGroup({ section }) {
 
   return (
     <div className="flex flex-wrap gap-4 pt-4">
-      {ctas.map((cta, index) => (
-        <Link key={`${cta.href}-${cta.label}`} to={cta.href} className={index === 1 ? 'btn-secondary' : 'btn-primary'}>
-          {cta.label}
-        </Link>
-      ))}
+      {ctas.map((cta, index) => {
+        const isAnchor = cta.href.includes('#');
+        const LinkComponent = isAnchor ? ScrollLink : Link;
+        return (
+          <LinkComponent key={`${cta.href}-${cta.label}`} to={cta.href} className={index === 1 ? 'btn-secondary' : 'btn-primary'}>
+            {cta.label}
+          </LinkComponent>
+        );
+      })}
     </div>
   );
 }
@@ -257,9 +262,27 @@ function Hero({ section, pageKey }) {
           <HeroVisual section={section} className="lg:hidden" />
 
           <div className="hero-actions">
-            {section.primaryCta && <Link to={section.primaryCta.href} className="hero-btn hero-btn-primary">{section.primaryCta.label} <span aria-hidden="true">-&gt;</span></Link>}
-            {section.secondaryCta && <Link to={section.secondaryCta.href} className="hero-btn hero-btn-secondary">{section.secondaryCta.label}</Link>}
-            {section.tertiaryCta && <Link to={section.tertiaryCta.href} className="hero-btn hero-btn-ghost">{section.tertiaryCta.label}</Link>}
+            {section.primaryCta && (
+              (() => {
+                const isAnchor = section.primaryCta.href.includes('#');
+                const Component = isAnchor ? ScrollLink : Link;
+                return <Component to={section.primaryCta.href} className="hero-btn hero-btn-primary">{section.primaryCta.label} <span aria-hidden="true">-&gt;</span></Component>;
+              })()
+            )}
+            {section.secondaryCta && (
+              (() => {
+                const isAnchor = section.secondaryCta.href.includes('#');
+                const Component = isAnchor ? ScrollLink : Link;
+                return <Component to={section.secondaryCta.href} className="hero-btn hero-btn-secondary">{section.secondaryCta.label}</Component>;
+              })()
+            )}
+            {section.tertiaryCta && (
+              (() => {
+                const isAnchor = section.tertiaryCta.href.includes('#');
+                const Component = isAnchor ? ScrollLink : Link;
+                return <Component to={section.tertiaryCta.href} className="hero-btn hero-btn-ghost">{section.tertiaryCta.label}</Component>;
+              })()
+            )}
           </div>
         </div>
 
@@ -396,42 +419,136 @@ function DetailCards({ section, pageKey }) {
 }
 
 function ContactForm({ section, pageKey }) {
+  const [result, setResult] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
   const visibleFields = (section.fields || []).filter((field) => !field.hidden);
+  const formRef = useRef(null);
+
+  const onSubmit = async (event) => {
+    event.preventDefault();
+    setIsLoading(true);
+
+    const formData = new FormData(event.target);
+    formData.append("access_key", "e93ccd86-fe78-4a4e-adc4-62e47a0fa583");
+
+    try {
+      const response = await fetch("https://api.web3forms.com/submit", {
+        method: "POST",
+        body: formData,
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        setResult("✓ Message sent successfully! I'll get back to you soon.");
+        formRef.current?.reset();
+      } else {
+        setResult("Something went wrong. Please try again.");
+      }
+    } catch (error) {
+      setResult("Error sending message. Please try again.");
+    } finally {
+      setIsLoading(false);
+      setTimeout(() => setResult(""), 5000);
+    }
+  };
 
   return (
     <SectionShell section={section} pageKey={pageKey}>
       <div className="container-custom">
-        <div className="mx-auto max-w-6xl">
+        <div className="mx-auto max-w-4xl">
           {hasText(section.eyebrow) && <div className="eyebrow mb-4">{section.eyebrow}</div>}
           {hasText(section.title) && <h2 className="section-title">{section.title}</h2>}
-          {hasText(section.body) && <p className="section-copy mt-6">{section.body}</p>}
-          <form className="mt-10 rounded-2xl border border-[var(--surface-grey)] bg-white p-4 shadow-2xl shadow-slate-900/10 sm:p-6 lg:p-8">
-            <div className="grid gap-5 md:grid-cols-2">
-              {visibleFields.map((field) => (
-                <label key={field.name} className="field-card block">
-                  <span className="mb-3 block text-base font-bold text-[var(--deep-navy)]">{field.label}</span>
-                  {field.type === 'textarea' ? (
-                    <textarea
-                      name={field.name}
-                      placeholder={field.placeholder}
-                      rows={4}
-                      className="w-full resize-y rounded-md border border-[var(--surface-grey)] bg-[var(--warm-white)] px-4 py-3 text-[var(--deep-navy)] outline-none transition placeholder:text-[var(--muted-blue)] focus:border-[var(--gold)]"
-                    />
-                  ) : (
-                    <input
-                      name={field.name}
-                      type={field.type}
-                      placeholder={field.placeholder}
-                      className="w-full rounded-md border border-[var(--surface-grey)] bg-[var(--warm-white)] px-4 py-3 text-[var(--deep-navy)] outline-none transition placeholder:text-[var(--muted-blue)] focus:border-[var(--gold)]"
-                    />
-                  )}
-                </label>
-              ))}
+          {hasText(section.body) && <p className="section-copy mt-6 mb-10">{section.body}</p>}
+
+          <form ref={formRef} onSubmit={onSubmit} className="relative rounded-3xl border border-[var(--surface-grey)] bg-gradient-to-br from-white to-[var(--warm-white)] p-6 shadow-2xl shadow-slate-900/10 sm:p-8 lg:p-10 overflow-hidden">
+            {/* Decorative background elements */}
+            <div className="absolute top-0 right-0 w-40 h-40 bg-[var(--gold)]/5 rounded-full -mr-20 -mt-20 pointer-events-none" aria-hidden="true"></div>
+            <div className="absolute bottom-0 left-0 w-32 h-32 bg-[var(--gold)]/5 rounded-full -ml-16 -mb-16 pointer-events-none" aria-hidden="true"></div>
+
+            <div className="relative z-10">
+              <div className="grid gap-6 md:grid-cols-2">
+                {visibleFields.map((field, index) => (
+                  <label key={field.name} className={`group block ${field.type === 'textarea' ? 'md:col-span-2' : ''}`}>
+                    <div className="flex items-center gap-2 mb-3">
+                      <span className="text-sm font-semibold uppercase tracking-wider text-[var(--deep-navy)]">{field.label}</span>
+                      <span className="text-[var(--gold)] font-bold">*</span>
+                    </div>
+                    {field.type === 'textarea' ? (
+                      <textarea
+                        name={field.name}
+                        placeholder={field.placeholder}
+                        rows={6}
+                        required
+                        className="w-full resize-none rounded-xl border-2 border-[var(--surface-grey)] bg-white px-5 py-4 text-[var(--deep-navy)] outline-none transition duration-300 placeholder:text-[var(--muted-blue)] focus:border-[var(--gold)] focus:shadow-lg focus:shadow-[var(--gold)]/20 group-hover:border-[var(--gold)]/50"
+                      />
+                    ) : (
+                      <input
+                        name={field.name}
+                        type={field.type}
+                        placeholder={field.placeholder}
+                        required
+                        className="w-full rounded-xl border-2 border-[var(--surface-grey)] bg-white px-5 py-4 text-[var(--deep-navy)] outline-none transition duration-300 placeholder:text-[var(--muted-blue)] focus:border-[var(--gold)] focus:shadow-lg focus:shadow-[var(--gold)]/20 group-hover:border-[var(--gold)]/50"
+                      />
+                    )}
+                  </label>
+                ))}
+              </div>
+
+              {result && (
+                <div className={`mt-8 rounded-xl border-2 px-5 py-4 text-sm font-semibold flex items-center gap-3 animate-slideIn ${
+                  result.includes('successfully')
+                    ? 'border-green-200 bg-green-50 text-green-700'
+                    : 'border-red-200 bg-red-50 text-red-700'
+                }`}>
+                  <span className="text-lg">{result.includes('successfully') ? '✓' : '✕'}</span>
+                  {result}
+                </div>
+              )}
+
+              <div className="mt-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                <button
+                  type="submit"
+                  disabled={isLoading}
+                  className="relative px-8 py-4 font-bold text-white rounded-xl bg-[var(--gold)] hover:bg-[var(--gold)]/90 transition duration-300 disabled:opacity-60 disabled:cursor-not-allowed shadow-lg hover:shadow-xl shadow-[var(--gold)]/30 hover:shadow-[var(--gold)]/50 group overflow-hidden"
+                >
+                  <span className="relative z-10 flex items-center justify-center gap-2">
+                    {isLoading ? (
+                      <>
+                        <span className="inline-block w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
+                        Sending...
+                      </>
+                    ) : (
+                      <>
+                        {section.submitLabel || 'Send Message'}
+                        <span className="transition group-hover:translate-x-1">→</span>
+                      </>
+                    )}
+                  </span>
+                </button>
+                <div className="text-sm text-[var(--muted-blue)] flex items-center gap-2">
+                  <span className="w-2 h-2 rounded-full bg-[var(--gold)]"></span>
+                  I'll respond within 24 hours
+                </div>
+              </div>
             </div>
-            <button type="submit" className="btn-warm mt-6 w-full sm:w-auto">
-              {section.submitLabel || 'Submit'}
-            </button>
           </form>
+
+          {/* Trust indicators */}
+          {/* <div className="mt-12 grid grid-cols-3 gap-4 text-center">
+            <div>
+              <div className="text-2xl font-bold text-[var(--gold)]">100%</div>
+              <p className="text-xs text-[var(--muted-blue)] uppercase tracking-wide">Secure</p>
+            </div>
+            <div>
+              <div className="text-2xl font-bold text-[var(--gold)]">24h</div>
+              <p className="text-xs text-[var(--muted-blue)] uppercase tracking-wide">Response</p>
+            </div>
+            <div>
+              <div className="text-2xl font-bold text-[var(--gold)]">Direct</div>
+              <p className="text-xs text-[var(--muted-blue)] uppercase tracking-wide">Contact</p>
+            </div>
+          </div> */}
         </div>
       </div>
     </SectionShell>

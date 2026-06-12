@@ -1,4 +1,16 @@
 import { Link } from 'react-router-dom';
+import ScrollLink from './ScrollLink';
+
+function renderCta(cta, className) {
+  if (!cta) return null;
+  const isAnchor = cta.href.includes('#');
+  const Component = isAnchor ? ScrollLink : Link;
+  return (
+    <Component key={cta.href} to={cta.href} className={className}>
+      {cta.label}
+    </Component>
+  );
+}
 
 export default function PageHero({ section }) {
   const contentWidth = section.wide ? 'max-w-6xl' : 'max-w-3xl';
@@ -29,11 +41,7 @@ export default function PageHero({ section }) {
           </h1>
           <p className="mb-8 text-lg leading-relaxed text-[var(--warm-white)] sm:text-xl">{section.body}</p>
 
-          {section.primaryCta && (
-            <Link to={section.primaryCta.href} className="btn-primary">
-              {section.primaryCta.label}
-            </Link>
-          )}
+          {renderCta(section.primaryCta, 'btn-primary')}
         </div>
       </div>
     </section>
