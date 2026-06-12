@@ -180,17 +180,22 @@
   }
 
   .card-hover {
-    @apply transition duration-500 hover:-translate-y-1;
+    @apply transition-all duration-500 ease-out;
   }
 
   .card-hover:hover {
-    box-shadow: 0 24px 52px rgb(29 34 38 / 0.16);
+    transform: translateY(-8px) scale(1.01);
+    box-shadow: 0 32px 64px rgba(29, 34, 38, 0.18);
+  }
+
+  .card-hover:hover .number-badge {
+    transform: scale(1.1);
   }
 
   .number-badge {
     background: var(--gold);
     color: white;
-    @apply inline-flex h-8 w-8 items-center justify-center rounded-full text-xs font-bold;
+    @apply inline-flex h-10 w-10 items-center justify-center rounded-full text-sm font-bold transition-transform duration-300;
   }
 
   .dark-section {
@@ -231,14 +236,26 @@
     color: var(--deep-navy);
     border-radius: var(--corner-radius);
     box-shadow: var(--card-shadow);
-    @apply border p-6 pt-8 transition duration-500;
+    @apply border transition duration-500;
     isolation: isolate;
   }
 
   .surface-card::before {
     content: '';
     background: var(--gold);
-    @apply absolute left-0 top-0 h-1.5 w-full;
+    @apply absolute left-0 top-0 h-2.5 w-full;
+  }
+
+  .process-card {
+    @apply p-7 min-h-[130px] flex flex-col justify-center;
+  }
+
+  .content-card {
+    @apply p-6 pt-8;
+  }
+
+  .detail-card {
+    @apply p-6 pt-8 flex flex-col;
   }
 
   .surface-card::marker {
@@ -275,7 +292,7 @@
   }
 
   .detail-card {
-    @apply flex min-h-full flex-col items-center text-center;
+    @apply flex min-h-full flex-col items-start text-left;
   }
 
   .detail-card > div:first-child {
@@ -514,8 +531,7 @@
   }
 
   .surface-card.card-hover:hover {
-    border-color: color-mix(in srgb, var(--gold) 42%, var(--surface-grey));
-    transform: translateY(-0.45rem) rotateX(1.5deg);
+    border-color: color-mix(in srgb, var(--gold) 60%, var(--surface-grey));
   }
 
   /* ─── TextFlow redesign ─────────────────────────────────── */

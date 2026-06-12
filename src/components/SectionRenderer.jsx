@@ -136,7 +136,7 @@ function CardMedia({ card }) {
   return null;
 }
 
-function CardHeader({ card, fallbackNumber }) {
+function CardHeader({ card, fallbackNumber, cardType = 'content' }) {
   const title = card.title || card.company || card.lane;
   const hasVisual = card.logoUrl || card.iconUrl || card.icon || card.media?.url || card.mediaUrl;
 
@@ -149,10 +149,19 @@ function CardHeader({ card, fallbackNumber }) {
     );
   }
 
+  if (cardType === 'process') {
+    return (
+      <div className="flex items-center gap-4">
+        {hasVisual ? <CardMedia card={card} /> : <div className="number-badge shrink-0">{fallbackNumber}</div>}
+        {hasText(title) && <h3 className="min-w-0 text-lg font-bold text-[var(--deep-navy)]">{title}</h3>}
+      </div>
+    );
+  }
+
   return (
     <div className="mb-4 flex flex-col items-center gap-4">
       {hasVisual ? <CardMedia card={card} /> : <div className="number-badge shrink-0">{fallbackNumber}</div>}
-      {hasText(title) && <h3 className="text-lg font-bold text-[var(--deep-navy)]">{title}</h3>}
+      {hasText(title) && <h3 className="min-w-0 text-lg font-bold text-[var(--deep-navy)] text-center">{title}</h3>}
     </div>
   );
 }
@@ -380,7 +389,9 @@ function TextFlow({ section, pageKey }) {
 function Cards({ section, pageKey }) {
   const visibleCards = (section.cards || []).filter((card) => !card.hidden);
   const isFeatureGrid = visibleCards.length <= 3;
+  const isProcessGrid = visibleCards.every(card => !hasText(card.body) && !hasText(card.link));
   const gridClass = isFeatureGrid ? 'grid gap-6 lg:grid-cols-3' : 'grid gap-6 md:grid-cols-2 xl:grid-cols-4';
+  const cardType = isProcessGrid ? 'process' : 'content';
 
   return (
     <SectionShell section={section} pageKey={pageKey}>
@@ -394,8 +405,8 @@ function Cards({ section, pageKey }) {
             const title = card.title || card.company || card.lane;
             const bodyIsDuplicate = card.body?.trim() === title?.trim();
             return (
-              <article key={`${card.title}-${idx}`} className="surface-card card-hover stagger-item">
-                <CardHeader card={card} fallbackNumber={idx + 1} />
+              <article key={`${card.title}-${idx}`} className={`surface-card card-hover stagger-item ${cardType}-card`}>
+                <CardHeader card={card} fallbackNumber={idx + 1} cardType={cardType} />
                 {hasText(card.body) && !bodyIsDuplicate && (
                   <p className="text-sm leading-relaxed text-[var(--muted-blue)]">{card.body}</p>
                 )}
@@ -436,7 +447,7 @@ function DetailCards({ section, pageKey }) {
 
             return (
               <article key={`${item.title || item.company || item.lane}-${idx}`} className="surface-card detail-card card-hover stagger-item">
-                <CardHeader card={item} fallbackNumber={idx + 1} />
+                <CardHeader card={item} fallbackNumber={idx + 1} cardType="process" />
                 {hasText(item.sector) && <p className="mb-5 text-sm font-semibold leading-relaxed text-[var(--muted-blue)]">{item.sector}</p>}
                 {rows.length > 0 && (
                   <div className="space-y-5 text-sm leading-relaxed">
