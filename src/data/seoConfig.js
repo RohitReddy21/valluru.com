@@ -19,17 +19,17 @@ export const GSC_VERIFICATION = 'YOUR_SEARCH_CONSOLE_VERIFICATION_CODE';
 
 export const seoConfig = {
   home: {
-    title: 'Sasidhar Valluru — Investor, Operator & AI Architect | TheValluru.com',
+    title: 'Sasidhar Valluru - Investor, Operator, AI Architect, Executive Builder',
     description:
-      'Sasidhar Valluru is an investor, operator, and AI architect who builds, backs, and scales companies at the intersection of applied AI, product architecture, delivery governance, and India execution.',
+      'Professional home of Sasidhar Valluru. Applied AI, product architecture, operating model design, India execution, enterprise workflows, and delivery governance.',
     keywords:
       'Sasidhar Valluru, investor, AI architect, operator, executive builder, applied AI, India execution, product architecture, delivery governance',
     ogType: 'website',
   },
   about: {
-    title: 'About Sasidhar Valluru — Executive Builder, Operator & AI Leader',
+    title: 'About Sasidhar Valluru - Builder, Operator, AI Architect',
     description:
-      'Learn about Sasidhar Valluru — an executive builder with deep experience in AI-enabled systems, enterprise platforms, BPO operations, offshore execution, venture building, and leadership formation.',
+      'Professional identity, working method, builder/operator background, leadership philosophy, and operating approach of Sasidhar Valluru.',
     keywords:
       'about Sasidhar Valluru, executive background, AI leader, platform engineering, BPO operations, India delivery, venture builder, leadership',
     ogType: 'profile',
@@ -41,11 +41,12 @@ export const seoConfig = {
     keywords:
       'Sasidhar Valluru investments, TechJignayasa, PrimeVerse, Vipas Energy, applied AI investment, venture building, India execution, AI operating leverage',
     ogType: 'website',
+    noIndex: true,
   },
   advisory: {
-    title: 'Executive Advisory — Sasidhar Valluru | AI, Product, PMO & India Execution',
+    title: 'Executive Advisory - Applied AI, Product Architecture, PMO, ODC/BOT Execution',
     description:
-      'Sasidhar Valluru provides executive advisory for AI architecture, product and platform design, PMO and delivery governance, India ODC/BOT execution, and operational transformation.',
+      'Advisory for founders, CTOs, investors, product leaders, and enterprise teams facing AI, product, delivery, governance, and operating-model problems.',
     keywords:
       'executive advisory, AI advisory, product architecture advisory, PMO governance, India ODC BOT, offshore execution advisory, operational transformation, Sasidhar Valluru',
     ogType: 'website',
@@ -57,11 +58,12 @@ export const seoConfig = {
     keywords:
       'AI operations insights, product architecture essays, delivery governance notes, India execution, venture building, leadership essays, Sasidhar Valluru blog',
     ogType: 'website',
+    noIndex: true,
   },
   contact: {
-    title: 'Contact Sasidhar Valluru — Start an Advisory or Investment Conversation',
+    title: 'Start a Working Conversation - Sasidhar Valluru',
     description:
-      'Start a serious advisory, investment, partnership, or operating conversation with Sasidhar Valluru. Engagements cover AI architecture, product delivery, PMO, India execution, and venture building.',
+      'Contact Sasidhar Valluru for executive advisory, applied AI systems, product architecture, India execution, operating model design, and venture conversations.',
     keywords:
       'contact Sasidhar Valluru, advisory inquiry, investment conversation, AI advisory contact, executive advisory India, startup advisory',
     ogType: 'website',

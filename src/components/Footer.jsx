@@ -19,7 +19,6 @@ export default function Footer() {
             <ul className="space-y-2 text-[var(--warm-white)]">
               <li><Link to="/" className="transition hover:text-[var(--gold)]">Home</Link></li>
               <li><Link to="/about" className="transition hover:text-[var(--gold)]">About</Link></li>
-              {/* <li><Link to="/investments" className="transition hover:text-[var(--gold)]">Investments</Link></li> */}
               <li><Link to="/advisory" className="transition hover:text-[var(--gold)]">Advisory</Link></li>
             </ul>
           </div>
@@ -27,9 +26,8 @@ export default function Footer() {
           <div>
             <h4 className="mb-4 text-sm font-semibold text-[var(--gold)]">Resources</h4>
             <ul className="space-y-2 text-[var(--warm-white)]">
-              {/* <li><Link to="/insights" className="transition hover:text-[var(--gold)]">Insights</Link></li> */}
-              <li><a href={brand.linkedinUrl} target="_blank" rel="noreferrer" className="transition hover:text-[var(--gold)]">LinkedIn</a></li>
-              <li><a href="https://www.thevalluru.org/" target="_blank" rel="noreferrer" className="transition hover:text-[var(--gold)]">The Human Side</a></li>
+              <li><a href={brand.linkedinUrl} target="_blank" rel="noreferrer" className="transition hover:text-[var(--gold)]">LinkedIn Profile</a></li>
+              <li><a href={brand.inwardFireUrl} target="_blank" rel="noreferrer" className="transition hover:text-[var(--gold)]">TheValluru.org / The Human Side</a></li>
               <li><Link to="/contact#contact-form" className="transition hover:text-[var(--gold)]">Contact</Link></li>
             </ul>
           </div>

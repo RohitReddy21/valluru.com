@@ -47,14 +47,6 @@ export default function SchemaMarkup() {
     publisher: {
       '@id': `${SITE_URL}/#organization`,
     },
-    potentialAction: {
-      '@type': 'SearchAction',
-      target: {
-        '@type': 'EntryPoint',
-        urlTemplate: `${SITE_URL}/insights?q={search_term_string}`,
-      },
-      'query-input': 'required name=search_term_string',
-    },
   };
 
   // ── Person Schema ───────────────────────────────────────
@@ -148,7 +140,7 @@ export default function SchemaMarkup() {
 
   // ── Investments FAQ Schema ──────────────────────────────
   const investmentsFaqSchema =
-    pathname === '/investments'
+    pathname === '/__hidden-investments'
       ? {
           '@context': 'https://schema.org',
           '@type': 'FAQPage',

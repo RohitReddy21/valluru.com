@@ -267,6 +267,21 @@ function Hero({ section, pageKey }) {
             <span className="text-[var(--gold)]">Executive Builder.</span>
           </h1>
           {hasText(section.body) && <p className="hero-description">{section.body}</p>}
+          {section.proofPoints?.length > 0 && (
+            <div className="hero-proof-strip" aria-label="Proof points">
+              {section.proofPoints.map((point, idx) => {
+                const [label, ...rest] = String(point).split(':');
+                const body = rest.join(':').trim();
+
+                return (
+                  <article key={`${label}-${idx}`} className="hero-proof-card">
+                    <span className="hero-proof-label">{body ? label : `Proof ${idx + 1}`}</span>
+                    <span className="hero-proof-body">{body || point}</span>
+                  </article>
+                );
+              })}
+            </div>
+          )}
 
           <HeroVisual section={section} className="lg:hidden" />
 
@@ -400,23 +415,25 @@ function Cards({ section, pageKey }) {
         {hasText(section.title) && <h2 className="section-title">{section.title}</h2>}
         {hasText(section.body) && <p className="section-copy mt-4 mb-8">{section.body}</p>}
 
-        <div className={`${gridClass} mt-8`}>
-          {visibleCards.map((card, idx) => {
-            const title = card.title || card.company || card.lane;
-            const bodyIsDuplicate = card.body?.trim() === title?.trim();
-            return (
-              <article key={`${card.title}-${idx}`} className={`surface-card card-hover stagger-item ${cardType}-card`}>
-                <CardHeader card={card} fallbackNumber={idx + 1} cardType={cardType} />
-                {hasText(card.body) && !bodyIsDuplicate && (
-                  <p className="text-sm leading-relaxed text-[var(--muted-blue)]">{card.body}</p>
-                )}
-                {hasText(card.link) && (
-                  <p className="mt-5 rounded-lg bg-[var(--warm-white)] px-4 py-3 text-sm font-semibold text-[var(--deep-navy)]">{card.link}</p>
-                )}
-              </article>
-            );
-          })}
-        </div>
+        {visibleCards.length > 0 && (
+          <div className={`${gridClass} mt-8`}>
+            {visibleCards.map((card, idx) => {
+              const title = card.title || card.company || card.lane;
+              const bodyIsDuplicate = card.body?.trim() === title?.trim();
+              return (
+                <article key={`${card.title}-${idx}`} className={`surface-card card-hover stagger-item ${cardType}-card`}>
+                  <CardHeader card={card} fallbackNumber={idx + 1} cardType={cardType} />
+                  {hasText(card.body) && !bodyIsDuplicate && (
+                    <p className="text-sm leading-relaxed text-[var(--muted-blue)]">{card.body}</p>
+                  )}
+                  {hasText(card.link) && (
+                    <p className="mt-5 rounded-lg bg-[var(--warm-white)] px-4 py-3 text-sm font-semibold text-[var(--deep-navy)]">{card.link}</p>
+                  )}
+                </article>
+              );
+            })}
+          </div>
+        )}
 
         <MediaGallery items={section.mediaItems} />
 
@@ -471,6 +488,7 @@ function DetailCards({ section, pageKey }) {
 function ContactForm({ section, pageKey }) {
   const [result, setResult] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [otherSelections, setOtherSelections] = useState({});
   const visibleFields = (section.fields || []).filter((field) => !field.hidden);
   const formRef = useRef(null);
 
@@ -492,6 +510,7 @@ function ContactForm({ section, pageKey }) {
       if (data.success) {
         setResult("✓ Message sent successfully! I'll get back to you soon.");
         formRef.current?.reset();
+        setOtherSelections({});
       } else {
         setResult("Something went wrong. Please try again.");
       }
@@ -518,31 +537,77 @@ function ContactForm({ section, pageKey }) {
 
             <div className="relative z-10">
               <div className="grid gap-6 md:grid-cols-2">
-                {visibleFields.map((field) => (
-                  <label key={field.name} className={`group block ${field.type === 'textarea' ? 'md:col-span-2' : ''}`}>
-                    <div className="flex items-center gap-2 mb-3">
-                      <span className="text-sm font-semibold uppercase tracking-wider text-[var(--deep-navy)]">{field.label}</span>
-                      <span className="text-[var(--gold)] font-bold">*</span>
+                {visibleFields.map((field) => {
+                  const isRequired = field.required !== false;
+                  const isTextarea = field.type === 'textarea';
+                  const isSelect = field.type === 'select' || field.type === 'select-with-other';
+                  const otherOptionLabel = field.otherOptionLabel || 'Other';
+                  const showOtherInput = field.type === 'select-with-other' && otherSelections[field.name];
+
+                  return (
+                    <div key={field.name} className={`group block ${isTextarea ? 'md:col-span-2' : ''}`}>
+                      <div className="flex items-center gap-2 mb-3">
+                        <label htmlFor={field.name} className="text-sm font-semibold uppercase tracking-wider text-[var(--deep-navy)]">{field.label}</label>
+                        {isRequired ? (
+                          <span className="text-[var(--gold)] font-bold">*</span>
+                        ) : (
+                          <span className="text-xs font-semibold uppercase tracking-wider text-[var(--muted-blue)]">Optional</span>
+                        )}
+                      </div>
+                      {isTextarea ? (
+                        <textarea
+                          id={field.name}
+                          name={field.name}
+                          placeholder={field.placeholder}
+                          rows={6}
+                          required={isRequired}
+                          className="w-full resize-none rounded-xl border-2 border-[var(--surface-grey)] bg-white px-5 py-4 text-[var(--deep-navy)] outline-none transition duration-300 placeholder:text-[var(--muted-blue)] focus:border-[var(--gold)] focus:shadow-lg focus:shadow-[var(--gold)]/20 group-hover:border-[var(--gold)]/50"
+                        />
+                      ) : isSelect ? (
+                        <>
+                          <select
+                            id={field.name}
+                            name={field.name}
+                            required={isRequired}
+                            defaultValue=""
+                            onChange={(event) => {
+                              const isOther = event.target.value === otherOptionLabel;
+                              setOtherSelections((current) => ({
+                                ...current,
+                                [field.name]: isOther,
+                              }));
+                            }}
+                            className="w-full rounded-xl border-2 border-[var(--surface-grey)] bg-white px-5 py-4 text-[var(--deep-navy)] outline-none transition duration-300 focus:border-[var(--gold)] focus:shadow-lg focus:shadow-[var(--gold)]/20 group-hover:border-[var(--gold)]/50"
+                          >
+                            <option value="" disabled>{field.placeholder || `Select ${field.label}`}</option>
+                            {(field.options || []).map((option) => (
+                              <option key={option} value={option}>{option}</option>
+                            ))}
+                          </select>
+                          {showOtherInput && (
+                            <input
+                              id={`${field.name}-other`}
+                              name={field.otherFieldName || `${field.name}Other`}
+                              type="text"
+                              placeholder={field.otherPlaceholder || `Type ${field.label.toLowerCase()}`}
+                              required={isRequired}
+                              className="mt-3 w-full rounded-xl border-2 border-[var(--surface-grey)] bg-white px-5 py-4 text-[var(--deep-navy)] outline-none transition duration-300 placeholder:text-[var(--muted-blue)] focus:border-[var(--gold)] focus:shadow-lg focus:shadow-[var(--gold)]/20 group-hover:border-[var(--gold)]/50"
+                            />
+                          )}
+                        </>
+                      ) : (
+                        <input
+                          id={field.name}
+                          name={field.name}
+                          type={field.type}
+                          placeholder={field.placeholder}
+                          required={isRequired}
+                          className="w-full rounded-xl border-2 border-[var(--surface-grey)] bg-white px-5 py-4 text-[var(--deep-navy)] outline-none transition duration-300 placeholder:text-[var(--muted-blue)] focus:border-[var(--gold)] focus:shadow-lg focus:shadow-[var(--gold)]/20 group-hover:border-[var(--gold)]/50"
+                        />
+                      )}
                     </div>
-                    {field.type === 'textarea' ? (
-                      <textarea
-                        name={field.name}
-                        placeholder={field.placeholder}
-                        rows={6}
-                        required
-                        className="w-full resize-none rounded-xl border-2 border-[var(--surface-grey)] bg-white px-5 py-4 text-[var(--deep-navy)] outline-none transition duration-300 placeholder:text-[var(--muted-blue)] focus:border-[var(--gold)] focus:shadow-lg focus:shadow-[var(--gold)]/20 group-hover:border-[var(--gold)]/50"
-                      />
-                    ) : (
-                      <input
-                        name={field.name}
-                        type={field.type}
-                        placeholder={field.placeholder}
-                        required
-                        className="w-full rounded-xl border-2 border-[var(--surface-grey)] bg-white px-5 py-4 text-[var(--deep-navy)] outline-none transition duration-300 placeholder:text-[var(--muted-blue)] focus:border-[var(--gold)] focus:shadow-lg focus:shadow-[var(--gold)]/20 group-hover:border-[var(--gold)]/50"
-                      />
-                    )}
-                  </label>
-                ))}
+                  );
+                })}
               </div>
 
               {result && (
@@ -605,6 +670,30 @@ function ContactForm({ section, pageKey }) {
   );
 }
 
+function ProofStrip({ section, pageKey }) {
+  return (
+    <SectionShell section={section} pageKey={pageKey}>
+      <div className="container-custom">
+        <div className="proof-strip-wrapper">
+          <div className="hero-proof-strip" aria-label="Proof points">
+            {section.proofPoints?.map((point, idx) => {
+              const label = point.label || '';
+              const body = point.body || '';
+
+              return (
+                <article key={`${label}-${idx}`} className="hero-proof-card">
+                  <span className="hero-proof-label">{label}</span>
+                  <span className="hero-proof-body">{body}</span>
+                </article>
+              );
+            })}
+          </div>
+        </div>
+      </div>
+    </SectionShell>
+  );
+}
+
 export default function SectionRenderer({ section, pageKey }) {
   if (section.hidden) return null;
   if (section.type === 'hero') return <Hero section={section} pageKey={pageKey} />;
@@ -613,5 +702,6 @@ export default function SectionRenderer({ section, pageKey }) {
   if (section.type === 'cards') return <Cards section={section} pageKey={pageKey} />;
   if (section.type === 'detail-cards') return <DetailCards section={section} pageKey={pageKey} />;
   if (section.type === 'contact-form') return <ContactForm section={section} pageKey={pageKey} />;
+  if (section.type === 'proof-strip') return <ProofStrip section={section} pageKey={pageKey} />;
   return <Cards section={{ ...section, cards: section.cards || section.items || [] }} pageKey={pageKey} />;
 }

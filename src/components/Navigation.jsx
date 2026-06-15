@@ -10,8 +10,6 @@ export default function Navigation() {
     { label: 'Home', href: '/' },
     { label: 'About', href: '/about' },
     { label: 'Advisory', href: '/advisory' },
-    // { label: 'Investments', href: '/investments' },
-    // { label: 'Insights', href: '/insights' },
   ];
 
   const linkClass = ({ isActive }) => (

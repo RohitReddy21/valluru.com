@@ -794,6 +794,77 @@
     @apply max-w-xl text-base font-medium leading-7;
   }
 
+  .proof-strip-wrapper {
+    @apply mx-auto;
+    width: 90%;
+    max-width: 100%;
+    opacity: 0;
+    transform: translateY(var(--reveal-distance)) scale(0.992);
+    filter: blur(4px);
+    transition: opacity 900ms cubic-bezier(0.16, 1, 0.3, 1), transform 900ms cubic-bezier(0.16, 1, 0.3, 1), filter 900ms ease;
+    will-change: opacity, transform, filter;
+  }
+
+  .scroll-motion-scale .proof-strip-wrapper {
+    transform: translateY(18px) scale(0.94);
+    transform-origin: center center;
+  }
+
+  .scroll-reveal.in-view .proof-strip-wrapper {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    filter: blur(0);
+  }
+
+  .hero-proof-strip {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.75rem;
+    max-width: 100%;
+  }
+
+  .hero-proof-card {
+    border: 1.5px solid var(--gold);
+    background: color-mix(in srgb, #ffffff 95%, transparent);
+    box-shadow: 0 8px 24px rgb(10 102 194 / 0.12);
+    backdrop-filter: blur(12px);
+    @apply rounded-lg p-4 transition duration-300 hover:shadow-lg hover:shadow-blue-500/20;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 700ms cubic-bezier(0.16, 1, 0.3, 1), transform 700ms cubic-bezier(0.16, 1, 0.3, 1), box-shadow 300ms ease, border-color 300ms ease;
+  }
+
+  .hero-proof-card:nth-child(1) {
+    transition-delay: 200ms;
+  }
+
+  .hero-proof-card:nth-child(2) {
+    transition-delay: 280ms;
+  }
+
+  .hero-proof-card:nth-child(3) {
+    transition-delay: 360ms;
+  }
+
+  .hero-proof-card:nth-child(4) {
+    transition-delay: 440ms;
+  }
+
+  .scroll-reveal.in-view .hero-proof-card {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .hero-proof-label {
+    color: var(--gold);
+    @apply mb-2 block text-xs font-black uppercase tracking-widest;
+  }
+
+  .hero-proof-body {
+    color: var(--deep-navy);
+    @apply block text-sm font-semibold leading-6;
+  }
+
   .hero-actions {
     @apply flex flex-wrap gap-4 pt-2;
     max-width: 100%;
@@ -1170,6 +1241,15 @@
 
     .hero-copy p {
       line-height: 1.65;
+    }
+
+    .proof-strip-wrapper {
+      width: 100%;
+    }
+
+    .hero-proof-strip {
+      grid-template-columns: 1fr;
+      max-width: none;
     }
 
     .hero-actions {
