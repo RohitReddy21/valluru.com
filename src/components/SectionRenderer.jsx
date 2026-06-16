@@ -4,7 +4,7 @@ import AdminEditButton from './AdminEditButton';
 import { InlineMedia, MediaGallery, SectionBackground } from './MediaBlock';
 import { normalizeMediaUrl } from '../utils/mediaUrl';
 import ScrollLink from './ScrollLink';
-import fallbackPortrait from '../assets/sasidhar-valluru.jpg';
+import fallbackPortrait from '../assets/Sasi-final.jpeg';
 
 function getScrollMotion(section) {
   if (section.type === 'hero' || section.type === 'page-hero') return 'hero';
