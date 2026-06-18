@@ -6,7 +6,7 @@
 export const SITE_URL = 'https://thevalluru.com';
 export const SITE_NAME = 'TheValluru.com';
 export const PERSON_NAME = 'Sasidhar Valluru';
-export const DEFAULT_IMAGE = `${SITE_URL}/hero-tech-bg.png`;
+export const DEFAULT_IMAGE = `${SITE_URL}/social-preview.png`;
 export const TWITTER_HANDLE = '@sasivalluru';
 export const LINKEDIN_URL = 'https://www.linkedin.com/in/sasivalluru/';
 export const LOGO_URL = `${SITE_URL}/favicon.svg`;

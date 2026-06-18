@@ -76,19 +76,21 @@ export default function Seo() {
       <meta property="og:description" content={description} />
       <meta property="og:url" content={canonical} />
       <meta property="og:image" content={ogImage} />
-      <meta property="og:image:width" content="1200" />
-      <meta property="og:image:height" content="630" />
-      <meta property="og:image:alt" content="Sasidhar Valluru — Investor, Operator, AI Architect" />
+      <meta property="og:image:secure_url" content={ogImage} />
+      <meta property="og:image:type" content="image/png" />
+      <meta property="og:image:width" content="512" />
+      <meta property="og:image:height" content="512" />
+      <meta property="og:image:alt" content="SV favicon logo for TheValluru.com" />
       <meta property="og:locale" content="en_US" />
 
       {/* ── Twitter / X Cards ────────────────────────────────── */}
-      <meta name="twitter:card" content="summary_large_image" />
+      <meta name="twitter:card" content="summary" />
       <meta name="twitter:site" content={TWITTER_HANDLE} />
       <meta name="twitter:creator" content={TWITTER_HANDLE} />
       <meta name="twitter:title" content={title} />
       <meta name="twitter:description" content={description} />
       <meta name="twitter:image" content={ogImage} />
-      <meta name="twitter:image:alt" content="Sasidhar Valluru — Investor, Operator, AI Architect" />
+      <meta name="twitter:image:alt" content="SV favicon logo for TheValluru.com" />
     </Helmet>
   );
 }
