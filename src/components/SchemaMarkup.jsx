@@ -131,7 +131,7 @@ export default function SchemaMarkup() {
               name: 'How can I start an advisory conversation?',
               acceptedAnswer: {
                 '@type': 'Answer',
-                text: 'Use the Contact page at thevalluru.com/contact to start a serious advisory, investment, partnership, or operating conversation.',
+                text: 'Use the Contact page at www.thevalluru.com/contact to start a serious advisory, investment, partnership, or operating conversation.',
               },
             },
           ],

@@ -3,7 +3,7 @@
  * Update titles, descriptions, and keywords per page here.
  */
 
-export const SITE_URL = 'https://thevalluru.com';
+export const SITE_URL = 'https://www.thevalluru.com';
 export const SITE_NAME = 'TheValluru.com';
 export const PERSON_NAME = 'Sasidhar Valluru';
 export const DEFAULT_IMAGE = `${SITE_URL}/social-preview.png`;
