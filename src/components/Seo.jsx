@@ -39,7 +39,8 @@ export default function Seo() {
     `${brandName} — professional home of Sasidhar Valluru.`;
 
   const isNoIndex = config.noIndex || false;
-  const hasGa4 = GA4_ID && GA4_ID !== 'G-XXXXXXXXXX';
+  const isAdmin = location.pathname.startsWith('/admin');
+  const hasGa4 = GA4_ID && GA4_ID !== 'G-XXXXXXXXXX' && !isAdmin;
 
   return (
     <Helmet prioritizeSeoTags>
