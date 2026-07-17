@@ -37,9 +37,19 @@ export default function Footer() {
           </div>
         </div>
 
-        <div className="flex flex-col items-center justify-between gap-4 border-t border-[var(--mid-navy)] pt-8 md:flex-row">
+        <div className="flex flex-col items-center justify-between gap-4 border-t border-[var(--mid-navy)] pt-8 text-center md:flex-row md:text-left">
           <p className="text-sm text-[var(--warm-white)]">{brand.footerLine}</p>
-          <p className="text-xs text-[var(--surface-grey)] md:text-right">{brand.secondaryFooterLine}</p>
+          <div className="flex flex-col items-center gap-2 text-xs text-[var(--surface-grey)] md:items-end md:text-right">
+            <p>{brand.secondaryFooterLine}</p>
+            <a
+              href="https://primeverse.in/"
+              target="_blank"
+              rel="noreferrer"
+              className="font-semibold text-[var(--warm-white)] transition hover:text-[var(--gold)]"
+            >
+              Powered by PrimeVerse.in
+            </a>
+          </div>
         </div>
       </div>
     </footer>
