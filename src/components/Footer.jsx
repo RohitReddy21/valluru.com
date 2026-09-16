@@ -1,9 +1,13 @@
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { useSiteContent } from '../context/useSiteContent';
 
 export default function Footer() {
   const { siteContent } = useSiteContent();
+  const { pathname } = useLocation();
   const { brand } = siteContent;
+
+  // The admin editor is a full-height workspace; a marketing footer under it is noise.
+  if (pathname.startsWith('/admin')) return null;
 
   return (
     <footer className="border-t border-[var(--mid-navy)] bg-[var(--deep-navy)] py-14 text-white">
@@ -20,6 +24,7 @@ export default function Footer() {
               <li><Link to="/" className="transition hover:text-[var(--gold)]">Home</Link></li>
               <li><Link to="/about" className="transition hover:text-[var(--gold)]">About</Link></li>
               <li><Link to="/advisory" className="transition hover:text-[var(--gold)]">Advisory</Link></li>
+              <li><Link to="/resources" className="transition hover:text-[var(--gold)]">Resources</Link></li>
               <li><Link to="/contact#contact-form" className="transition hover:text-[var(--gold)]">Contact</Link></li>
 
             </ul>

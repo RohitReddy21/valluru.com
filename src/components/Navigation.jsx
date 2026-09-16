@@ -10,6 +10,7 @@ export default function Navigation() {
     { label: 'Home', href: '/' },
     { label: 'About', href: '/about' },
     { label: 'Advisory', href: '/advisory' },
+    { label: 'Resources', href: '/resources' },
   ];
 
   const linkClass = ({ isActive }) => (

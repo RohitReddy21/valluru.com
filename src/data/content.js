@@ -12,7 +12,7 @@ const withHeroMedia = (section) => ({
 });
 
 export const defaultSiteContent = {
-  _version: 10,
+  _version: 11,
   brand: {
     siteName: 'TheValluru.com',
     personName: 'Sasidhar Valluru',
@@ -535,6 +535,18 @@ export const defaultSiteContent = {
             { title: 'The Human Side', body: 'Selected writing that connects professional life with meaning, language, inward work, service, grief, devotion, and responsibility.', iconUrl: '', logoUrl: '', mediaUrl: '' },
           ],
           mediaItems: [],
+        },
+      ],
+    },
+    resources: {
+      title: 'Resources',
+      sections: [
+        {
+          id: 'resources-hero',
+          type: 'page-hero',
+          eyebrow: 'Resources',
+          title: 'Notes, posts, and published work',
+          body: 'LinkedIn posts, articles, and public commentary on applied AI, product architecture, delivery governance, and India execution. Individual resources are managed in the Resources tab of the admin editor.',
         },
       ],
     },

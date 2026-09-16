@@ -60,6 +60,14 @@ export const seoConfig = {
     ogType: 'website',
     noIndex: true,
   },
+  resources: {
+    title: 'Resources — LinkedIn Posts, Articles & Public Work | Sasidhar Valluru',
+    description:
+      'LinkedIn posts, articles, interviews, and published commentary by Sasidhar Valluru on applied AI, product architecture, delivery governance, and India execution.',
+    keywords:
+      'Sasidhar Valluru LinkedIn posts, applied AI resources, product architecture articles, delivery governance writing, India execution commentary',
+    ogType: 'website',
+  },
   contact: {
     title: 'Start a Working Conversation - Sasidhar Valluru',
     description:
@@ -92,5 +100,6 @@ export const breadcrumbMap = {
   '/investments': [{ label: 'Home', href: '/' }, { label: 'Investments' }],
   '/advisory': [{ label: 'Home', href: '/' }, { label: 'Advisory' }],
   '/insights': [{ label: 'Home', href: '/' }, { label: 'Insights' }],
+  '/resources': [{ label: 'Home', href: '/' }, { label: 'Resources' }],
   '/contact': [{ label: 'Home', href: '/' }, { label: 'Contact' }],
 };
