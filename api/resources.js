@@ -66,11 +66,19 @@ async function supabaseRest(path, { method = 'GET', body, prefer } = {}) {
 
   if (prefer) headers.Prefer = prefer;
 
-  const response = await fetch(`${supabaseUrl()}/rest/v1/${path}`, {
-    method,
-    headers,
-    body: body === undefined ? undefined : JSON.stringify(body),
-  });
+  let response;
+  try {
+    response = await fetch(`${supabaseUrl()}/rest/v1/${path}`, {
+      method,
+      headers,
+      body: body === undefined ? undefined : JSON.stringify(body),
+    });
+  } catch (error) {
+    const cause = error.cause?.code || error.cause?.message || error.message;
+    throw new Error(
+      `Cannot reach Supabase at ${supabaseUrl()} (${cause}). Check that the project exists, is not paused, and that SUPABASE_URL is correct.`,
+    );
+  }
 
   const text = await response.text();
   const payload = text ? JSON.parse(text) : null;
